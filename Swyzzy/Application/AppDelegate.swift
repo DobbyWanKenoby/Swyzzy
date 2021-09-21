@@ -6,14 +6,21 @@
 //
 
 import UIKit
+import SwiftCoordinatorsKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
+    
+    /// Главный координтор приложения
+    lazy var coordinator: AppCoordinator = {
+        var appCoordinator = AppCoordinator()
+        return appCoordinator
+    }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // создание координатора для работы с Firebase
+        let firebaseCoordinator = FirebaseCoordinator(rootCoordinator: coordinator, options: [])
+        firebaseCoordinator.startFlow()
         return true
     }
 
