@@ -47,8 +47,7 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
         let user = DI.resolve(UserProtocol.self)!
         
         if user.isAuth {
-            let controller = InitializationController.getInstance()
-            controller.view.backgroundColor = .blue
+            let controller = AuthController.getInstance()
             navigationPresenter.viewControllers.append(controller)
         } else {
             let controller = InitializationController.getInstance()

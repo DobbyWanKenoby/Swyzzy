@@ -28,6 +28,13 @@
 		E06AB69A2702379F008D1BEA /* PhoneCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6992702379F008D1BEA /* PhoneCodeView.swift */; };
 		E06AB69D27023856008D1BEA /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB69C27023856008D1BEA /* AuthController.swift */; };
 		E06AB6A0270238CB008D1BEA /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = E06AB69F270238CB008D1BEA /* SnapKit */; };
+		E06AB6A227023AFA008D1BEA /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E06AB6A127023AFA008D1BEA /* Colors.xcassets */; };
+		E06AB6A427023EC3008D1BEA /* Flags.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E06AB6A327023EC3008D1BEA /* Flags.xcassets */; };
+		E06AB6A627024008008D1BEA /* SWTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6A527024008008D1BEA /* SWTextField.swift */; };
+		E06AB6A827024711008D1BEA /* SWButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6A727024711008D1BEA /* SWButton.swift */; };
+		E06AB6AC27025108008D1BEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E06AB6AE27025108008D1BEA /* Localizable.strings */; };
+		E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B02702517B008D1BEA /* StringExtension.swift */; };
+		E06AB6B3270251F7008D1BEA /* StringsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B2270251F7008D1BEA /* StringsEnum.swift */; };
 		E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */; };
 		E0B42F482700B323003C9C7B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F472700B323003C9C7B /* User.swift */; };
 		E0B42F4A2700B3D9003C9C7B /* CountriesPhones.plist in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */; };
@@ -74,6 +81,13 @@
 		E04DCD4726F9008C003B4F8E /* FirebaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCoordinator.swift; sourceTree = "<group>"; };
 		E06AB6992702379F008D1BEA /* PhoneCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneCodeView.swift; sourceTree = "<group>"; };
 		E06AB69C27023856008D1BEA /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
+		E06AB6A127023AFA008D1BEA /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		E06AB6A327023EC3008D1BEA /* Flags.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Flags.xcassets; sourceTree = "<group>"; };
+		E06AB6A527024008008D1BEA /* SWTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWTextField.swift; sourceTree = "<group>"; };
+		E06AB6A727024711008D1BEA /* SWButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWButton.swift; sourceTree = "<group>"; };
+		E06AB6AD27025108008D1BEA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		E06AB6B02702517B008D1BEA /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
+		E06AB6B2270251F7008D1BEA /* StringsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringsEnum.swift; sourceTree = "<group>"; };
 		E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternationalizationCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F472700B323003C9C7B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CountriesPhones.plist; sourceTree = "<group>"; };
@@ -138,12 +152,16 @@
 		E04DCCF626F8F109003B4F8E /* Swyzzy */ = {
 			isa = PBXGroup;
 			children = (
+				E06AB6AF2702516C008D1BEA /* Helpers */,
+				E06AB6A9270250DC008D1BEA /* Localization */,
 				E06AB69B270237A6008D1BEA /* View */,
 				E0B42F462700B310003C9C7B /* Model */,
 				E04DCD2D26F8F65B003B4F8E /* Application */,
 				E04DCD2A26F8F5F5003B4F8E /* Coordinators */,
 				E04DCD2E26F8F694003B4F8E /* Controllers */,
 				E04DCD0026F8F10A003B4F8E /* Assets.xcassets */,
+				E06AB6A127023AFA008D1BEA /* Colors.xcassets */,
+				E06AB6A327023EC3008D1BEA /* Flags.xcassets */,
 				E04DCD0226F8F10A003B4F8E /* LaunchScreen.storyboard */,
 				E04DCD0526F8F10A003B4F8E /* Info.plist */,
 				E04DCD3A26F8FFA8003B4F8E /* GoogleService-Info.plist */,
@@ -213,9 +231,28 @@
 			isa = PBXGroup;
 			children = (
 				E06AB6992702379F008D1BEA /* PhoneCodeView.swift */,
+				E06AB6A527024008008D1BEA /* SWTextField.swift */,
+				E06AB6A727024711008D1BEA /* SWButton.swift */,
 				E04DCD4926F9044A003B4F8E /* Fonts */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		E06AB6A9270250DC008D1BEA /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				E06AB6AE27025108008D1BEA /* Localizable.strings */,
+				E06AB6B2270251F7008D1BEA /* StringsEnum.swift */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		E06AB6AF2702516C008D1BEA /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				E06AB6B02702517B008D1BEA /* StringExtension.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		E0B42F462700B310003C9C7B /* Model */ = {
@@ -349,8 +386,11 @@
 				E0C704F72700B8FC00E72437 /* TitanOne-Regular.ttf in Resources */,
 				E04DCD0426F8F10A003B4F8E /* LaunchScreen.storyboard in Resources */,
 				E04DCD3B26F8FFA8003B4F8E /* GoogleService-Info.plist in Resources */,
+				E06AB6A227023AFA008D1BEA /* Colors.xcassets in Resources */,
 				E0B42F4A2700B3D9003C9C7B /* CountriesPhones.plist in Resources */,
+				E06AB6AC27025108008D1BEA /* Localizable.strings in Resources */,
 				E04DCD0126F8F10A003B4F8E /* Assets.xcassets in Resources */,
+				E06AB6A427023EC3008D1BEA /* Flags.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +416,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E008C4D22700BCE50093B5FD /* SwinjectAssemblies.swift in Sources */,
+				E06AB6A827024711008D1BEA /* SWButton.swift in Sources */,
+				E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */,
 				E06AB69D27023856008D1BEA /* AuthController.swift in Sources */,
 				E04DCD4826F9008C003B4F8E /* FirebaseCoordinator.swift in Sources */,
 				E04DCCF826F8F109003B4F8E /* AppDelegate.swift in Sources */,
@@ -383,6 +425,8 @@
 				E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */,
 				E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */,
 				E0B42F482700B323003C9C7B /* User.swift in Sources */,
+				E06AB6A627024008008D1BEA /* SWTextField.swift in Sources */,
+				E06AB6B3270251F7008D1BEA /* StringsEnum.swift in Sources */,
 				E04DCD2C26F8F60A003B4F8E /* InitializationCoordinator.swift in Sources */,
 				E04DCCFA26F8F109003B4F8E /* SceneDelegate.swift in Sources */,
 				E04DCD3726F8FC19003B4F8E /* MainFlowCoordinator.swift in Sources */,
@@ -428,6 +472,14 @@
 				E04DCD0326F8F10A003B4F8E /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		E06AB6AE27025108008D1BEA /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E06AB6AD27025108008D1BEA /* en */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -557,6 +609,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34E923QGF6;
 				INFOPLIST_FILE = Swyzzy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -577,6 +630,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 34E923QGF6;
 				INFOPLIST_FILE = Swyzzy/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
