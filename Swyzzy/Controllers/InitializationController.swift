@@ -23,6 +23,7 @@ class InitializationController: UIViewController, InitializationControllerProtoc
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        sleep(1)
         initializationDidEnd?()
     }
     

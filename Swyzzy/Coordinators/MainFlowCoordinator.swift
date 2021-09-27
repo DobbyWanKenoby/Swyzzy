@@ -17,45 +17,44 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
         }
     }
     
-    required init(rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
+    required
+    init(rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
         super.init(presenter: nil, rootCoordinator: rootCoordinator, options: options)
     }
     
-    public override init(rootCoordinator: Coordinator? = nil) {
-        super.init(presenter: nil, rootCoordinator: rootCoordinator, options: [])
-    }
-    
-    required public init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil) {
+    required
+    public init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil) {
         fatalError("init(presenter:rootCoordinator:) has not been implemented")
     }
     
-    required public override init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
+    required
+    public override init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
         fatalError("init(presenter:rootCoordinator:options:) has not been implemented")
+    }
+    
+    @discardableResult
+    public override init(rootCoordinator: Coordinator? = nil) {
+        super.init(presenter: nil, rootCoordinator: rootCoordinator, options: [])
     }
     
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
         
         // Запускаем координатор Инициализации
-        
-        let initializatorCoordinator = InitializatorCoordinator(rootCoordinator: self)
+        let initializationCoordinator = InitializatorCoordinator(rootCoordinator: self)
         // С помощью следующей строки кода
         // базовый контроллер InitializatorCoordinator станет базовым контроллером Scene Coordinator
-        self.presenter = initializatorCoordinator.presenter
+        self.presenter = initializationCoordinator.presenter
         // Запуск потока InitializatorCoordinator
-        initializatorCoordinator.startFlow(withWork: nil, finishCompletion: {
+        initializationCoordinator.startFlow(finishCompletion:  {
             
-            // TODO: По окончании работы координатора необходимо определять авторизован ли пользователь и в зависимости от этого вызывать соответствующий координатор
-        
+            // По окончании работы координатора инициализации
+            // должен начать работу FunctionalCoordinator и отобразиться интерфейс приложения
+            let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
+            self.route(from: self.presenter!, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
+            functionalCoordinator.startFlow()
+            
         })
-            
-            
-//                                            // По окончании работы координатора инициализации
-//                                            // должен начать работу FunctionalCoordinator и отобразиться интерфейс приложения
-//                                            let functionalCoordinator = CoordinatorFactory.getFunctionalCoordinator(rootCoordinator: self)
-//                                            self.route(from: self.presenter!, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
-//                                            functionalCoordinator.startFlow()
-//
 
     }
     

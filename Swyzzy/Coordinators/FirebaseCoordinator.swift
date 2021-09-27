@@ -14,12 +14,10 @@ protocol FirebaseCoordinatorProtocol: BaseCoordinator, Transmitter {}
 class FirebaseCoordinator: BaseCoordinator, FirebaseCoordinatorProtocol {
     var edit: ((Signal) -> Signal)?
     
-    
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
         // конфигурирование Firebase
         FirebaseApp.configure()
-        
         
     }
 }

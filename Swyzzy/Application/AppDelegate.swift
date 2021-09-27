@@ -16,11 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var appCoordinator = AppCoordinator()
         return appCoordinator
     }()
+    
+    lazy var firebaseCoordinator: Coordinator = {
+        FirebaseCoordinator(rootCoordinator: coordinator, options: [])
+    }()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // создание координатора для работы с Firebase
-        let firebaseCoordinator = FirebaseCoordinator(rootCoordinator: coordinator, options: [])
-        firebaseCoordinator.startFlow()
+        firebaseCoordinator.startFlow(withWork: nil, finishCompletion: nil)
         return true
     }
 
