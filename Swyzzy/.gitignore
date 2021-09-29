@@ -5,6 +5,9 @@
 ### Firebase ###
 GoogleService-Info.plist
 
+### Breakpoints ###
+*.xcb*
+
 ### Swift ###
 # Xcode
 #
