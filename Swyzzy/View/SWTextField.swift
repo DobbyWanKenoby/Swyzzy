@@ -24,7 +24,7 @@ class SWTextField: UITextField {
         self.layer.borderColor = UIColor(named: "TextFieldBorderColor")?.cgColor
         self.textColor = UIColor(named: "TextFieldTextColor")
         self.layer.borderWidth = 1
-        self.layer.cornerRadius = 7
+        self.layer.cornerRadius = 8
         
         self.layer.sublayerTransform = CATransform3DMakeTranslation(10, 0, 0);
     }

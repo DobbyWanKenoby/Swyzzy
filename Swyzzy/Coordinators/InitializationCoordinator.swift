@@ -32,5 +32,4 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 
     }
 
-    
 }

@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>Russia</key>
+<array>
 	<dict>
-		<key>Format</key>
-		<string>### ###-##-##</string>
-		<key>Code</key>
+		<key>name</key>
+		<string>United States Of America</string>
+		<key>phoneCode</key>
+		<string>+1</string>
+	</dict>
+	<dict>
+		<key>name</key>
+		<string>Russia</string>
+		<key>phoneCode</key>
 		<string>+7</string>
 	</dict>
-</dict>
+</array>
 </plist>

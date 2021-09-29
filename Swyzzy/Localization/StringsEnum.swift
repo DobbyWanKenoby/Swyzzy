@@ -11,8 +11,9 @@ enum Localization {
     
     // Экран входа
     enum AuthScreen: String {
-        case sendCodeButton = "sendCodeButton"
-        case aboutPolicy = "aboutPolicy"
+        case sendCodeButton
+        case aboutPolicy
+        case phoneNumber
         
         var localized: String {
             self.rawValue.localized()

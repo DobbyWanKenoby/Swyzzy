@@ -10,6 +10,11 @@ import Swinject
 protocol FunctionalCoordinatorProtocol: BasePresenter, Transmitter {}
 
 final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol {
+    
+    // MARK: - Properties
+    
+    var countries: [Country] = []
+    
     var edit: ((Signal) -> Signal)?
     
     private lazy var DI: Resolver = {
@@ -44,17 +49,48 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
         
+        backgroundLoadData()
+        
         let user = DI.resolve(UserProtocol.self)!
         
         if user.isAuth {
-            let controller = AuthController.getInstance()
-            navigationPresenter.viewControllers.append(controller)
+            navigationPresenter.viewControllers.append(getAuthController())
         } else {
             let controller = InitializationController.getInstance()
             controller.view.backgroundColor = .red
             navigationPresenter.viewControllers.append(controller)
         }
+    }
+    
+    // Фоновая загрузка данных, требуемых в ходе работы координатора
+    private func backgroundLoadData() {
+        DispatchQueue.global(qos: .background).async {
+            let signal = InternationalizationSignal.getCountriesForSMS
+            self.broadcast(signal: signal, withAnswerToReceiver: nil) { answerSignal in
+                if case InternationalizationSignal.countries(let countries) = answerSignal {
+                    self.countries = countries
+                }
+            }
+        }
+    }
+    
+    private func getAuthController() -> AuthControllerProtocol {
+        let controller = AuthController.getInstance()
+        controller.countryImage = UIImage(named: "Russia")
+        controller.countryCode = "+ 7"
+        controller.countryPhonePlaceholder = Localization.AuthScreen.phoneNumber.localized
+        controller.doForCountryChange = {
+            let countriesController = CountriesController(style: .insetGrouped)
+            countriesController.countries = self.countries
+            countriesController.doAfterChoiseCountry = { country in
+                controller.countryCode = country.phoneCode
+                controller.countryImage = country.image
+                countriesController.dismiss(animated: true, completion: nil)
+            }
+            self.route(from: self.presenter!, to: countriesController, method: .presentCard, completion: nil)
+        }
         
+        return controller
     }
 
     

@@ -6,13 +6,47 @@ import UIKit
 import SnapKit
 
 protocol AuthControllerProtocol where Self: UIViewController {
-    //var countryImage: UIImage { get set }
-    //var countryCode: String { get set }
-    //var countryPhoneTemplate: String { get set }
-    //var countryPhonePlaceholder: String { get set }
+    /// Флаг страны
+    var countryImage: UIImage? { get set }
+    /// Код страны
+    var countryCode: String? { get set }
+    /// Шаблон заполнения номера телефона
+    var countryPhoneTemplate: String? { get set }
+    /// Заменитель текста для текстового поля с номером телефона
+    var countryPhonePlaceholder: String? { get set }
+    
+    /// Действие по нажатию на кнопку с кодом страны
+    var doForCountryChange: (() -> Void)? { get set }
 }
 
 class AuthController: UIViewController, AuthControllerProtocol {
+    
+    // MARK: - Coordinator Input Data
+    
+    var countryImage: UIImage? {
+        didSet {
+            let handler: UIButton.ConfigurationUpdateHandler = { button in
+                button.configuration?.image = self.countryImage
+            }
+            phoneCodeView.configurationUpdateHandler = handler
+        }
+    }
+    
+    var countryCode: String? {
+        didSet {
+            phoneCodeView.setTitle(self.countryCode, for: .normal)
+        }
+    }
+    
+    var countryPhoneTemplate: String?
+    
+    var countryPhonePlaceholder: String?
+    
+    // MARK: - Coordinator Callbacks
+    
+    var doForCountryChange: (() -> Void)? = nil
+
+    // MARK: - View
     
     lazy private var tapRecognizer: UITapGestureRecognizer = {
         let recognizer = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
@@ -57,7 +91,7 @@ class AuthController: UIViewController, AuthControllerProtocol {
     lazy private var phoneNumberStackView: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [phoneCodeView, phoneNumberTextField])
         phoneCodeView.snp.makeConstraints { make in
-            make.width.equalTo(100)
+            make.width.equalTo(120)
             make.height.equalTo(50)
         }
         stack.distribution = .fill
@@ -65,13 +99,37 @@ class AuthController: UIViewController, AuthControllerProtocol {
         return stack
     }()
     
-    lazy private var phoneCodeView: PhoneCodeView = {
-        let view = PhoneCodeView(image: UIImage(named: "Russia") ?? UIImage(), text: "+7")
-        return view
+//    lazy private var phoneCodeView: PhoneCodeView = {
+//        let view = PhoneCodeView(image: UIImage(named: "Russia") ?? UIImage(), text: "+7")
+//        return view
+//    }()
+    
+    lazy private var phoneCodeView: UIButton = {
+        
+        var configuration = UIButton.Configuration.filled()
+        configuration.image = countryImage
+        configuration.imagePlacement = .leading
+        configuration.imagePadding = 10
+        configuration.baseBackgroundColor = UIColor(named: "TextFieldColor")
+        configuration.baseForegroundColor = UIColor(named: "TextColor")
+        
+        let button = UIButton(type: .system)
+        button.configuration = configuration
+        button.setTitle(countryCode, for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(named: "TextFieldBorderColor")?.cgColor
+        button.layer.cornerRadius = 8
+        
+        button.addAction(UIAction(handler: { _ in
+            self.doForCountryChange?()
+        }), for: .touchUpInside)
+        
+        return button
     }()
     
     lazy private var phoneNumberTextField: SWTextField = {
         let textfield = SWTextField()
+        textfield.placeholder = countryPhonePlaceholder
         textfield.keyboardType = .phonePad
         return textfield
     }()

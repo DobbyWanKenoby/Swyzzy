@@ -35,6 +35,9 @@
 		E06AB6AC27025108008D1BEA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E06AB6AE27025108008D1BEA /* Localizable.strings */; };
 		E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B02702517B008D1BEA /* StringExtension.swift */; };
 		E06AB6B3270251F7008D1BEA /* StringsEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B2270251F7008D1BEA /* StringsEnum.swift */; };
+		E06AB6B62704E45A008D1BEA /* InternationalizationSignal.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B52704E45A008D1BEA /* InternationalizationSignal.swift */; };
+		E06AB6B82704E558008D1BEA /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B72704E558008D1BEA /* Country.swift */; };
+		E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B92704F3D5008D1BEA /* CountriesController.swift */; };
 		E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */; };
 		E0B42F482700B323003C9C7B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F472700B323003C9C7B /* User.swift */; };
 		E0B42F4A2700B3D9003C9C7B /* CountriesPhones.plist in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */; };
@@ -88,6 +91,9 @@
 		E06AB6AD27025108008D1BEA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		E06AB6B02702517B008D1BEA /* StringExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtension.swift; sourceTree = "<group>"; };
 		E06AB6B2270251F7008D1BEA /* StringsEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringsEnum.swift; sourceTree = "<group>"; };
+		E06AB6B52704E45A008D1BEA /* InternationalizationSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternationalizationSignal.swift; sourceTree = "<group>"; };
+		E06AB6B72704E558008D1BEA /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
+		E06AB6B92704F3D5008D1BEA /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
 		E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternationalizationCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F472700B323003C9C7B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CountriesPhones.plist; sourceTree = "<group>"; };
@@ -152,11 +158,11 @@
 		E04DCCF626F8F109003B4F8E /* Swyzzy */ = {
 			isa = PBXGroup;
 			children = (
+				E04DCD2D26F8F65B003B4F8E /* Application */,
 				E06AB6AF2702516C008D1BEA /* Helpers */,
 				E06AB6A9270250DC008D1BEA /* Localization */,
 				E06AB69B270237A6008D1BEA /* View */,
 				E0B42F462700B310003C9C7B /* Model */,
-				E04DCD2D26F8F65B003B4F8E /* Application */,
 				E04DCD2A26F8F5F5003B4F8E /* Coordinators */,
 				E04DCD2E26F8F694003B4F8E /* Controllers */,
 				E04DCD0026F8F10A003B4F8E /* Assets.xcassets */,
@@ -192,6 +198,7 @@
 		E04DCD2A26F8F5F5003B4F8E /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
+				E06AB6B42704E44A008D1BEA /* Signals */,
 				E04DCD2B26F8F60A003B4F8E /* InitializationCoordinator.swift */,
 				E04DCD3626F8FC19003B4F8E /* MainFlowCoordinator.swift */,
 				E04DCD4726F9008C003B4F8E /* FirebaseCoordinator.swift */,
@@ -215,6 +222,7 @@
 			children = (
 				E04DCD2F26F8F6A7003B4F8E /* InitializationController.swift */,
 				E06AB69C27023856008D1BEA /* AuthController.swift */,
+				E06AB6B92704F3D5008D1BEA /* CountriesController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -255,11 +263,20 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		E06AB6B42704E44A008D1BEA /* Signals */ = {
+			isa = PBXGroup;
+			children = (
+				E06AB6B52704E45A008D1BEA /* InternationalizationSignal.swift */,
+			);
+			path = Signals;
+			sourceTree = "<group>";
+		};
 		E0B42F462700B310003C9C7B /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				E0B42F472700B323003C9C7B /* User.swift */,
 				E008C4D12700BCE50093B5FD /* SwinjectAssemblies.swift */,
+				E06AB6B72704E558008D1BEA /* Country.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -422,15 +439,18 @@
 				E04DCD4826F9008C003B4F8E /* FirebaseCoordinator.swift in Sources */,
 				E04DCCF826F8F109003B4F8E /* AppDelegate.swift in Sources */,
 				E04DCD3026F8F6A7003B4F8E /* InitializationController.swift in Sources */,
+				E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */,
 				E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */,
 				E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */,
 				E0B42F482700B323003C9C7B /* User.swift in Sources */,
+				E06AB6B82704E558008D1BEA /* Country.swift in Sources */,
 				E06AB6A627024008008D1BEA /* SWTextField.swift in Sources */,
 				E06AB6B3270251F7008D1BEA /* StringsEnum.swift in Sources */,
 				E04DCD2C26F8F60A003B4F8E /* InitializationCoordinator.swift in Sources */,
 				E04DCCFA26F8F109003B4F8E /* SceneDelegate.swift in Sources */,
 				E04DCD3726F8FC19003B4F8E /* MainFlowCoordinator.swift in Sources */,
 				E06AB69A2702379F008D1BEA /* PhoneCodeView.swift in Sources */,
+				E06AB6B62704E45A008D1BEA /* InternationalizationSignal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

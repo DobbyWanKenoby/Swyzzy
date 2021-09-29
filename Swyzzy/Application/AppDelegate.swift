@@ -20,9 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var firebaseCoordinator: Coordinator = {
         FirebaseCoordinator(rootCoordinator: coordinator, options: [])
     }()
+    
+    var internationalizationCoordinator: Coordinator!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         firebaseCoordinator.startFlow(withWork: nil, finishCompletion: nil)
+        internationalizationCoordinator = InternationalizationCoordinator(rootCoordinator: coordinator, options: [])
         return true
     }
 
