@@ -13,7 +13,12 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     
     // MARK: - Properties
     
+    // список стран для выбора кода
     var countries: [Country] = []
+    // объект-пользователь
+    lazy var user: UserProtocol = {
+        DI.resolve(UserProtocol.self)!
+    }()
     
     var edit: ((Signal) -> Signal)?
     
@@ -51,8 +56,6 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
         
         backgroundLoadData()
         
-        let user = DI.resolve(UserProtocol.self)!
-        
         if user.isAuth {
             navigationPresenter.viewControllers.append(getAuthController())
         } else {
@@ -76,9 +79,12 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     
     private func getAuthController() -> AuthControllerProtocol {
         let controller = AuthController.getInstance()
+        
         controller.countryImage = UIImage(named: "Russia")
-        controller.countryCode = "+ 7"
+        controller.countryCode = "+7"
         controller.countryPhonePlaceholder = Localization.AuthScreen.phoneNumber.localized
+        //controller.user = user
+        
         controller.doForCountryChange = {
             let countriesController = CountriesController(style: .insetGrouped)
             countriesController.countries = self.countries
@@ -89,6 +95,22 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
             }
             self.route(from: self.presenter!, to: countriesController, method: .presentCard, completion: nil)
         }
+        controller.sendSMSCodeByPhone = { phone in
+            self.user.authProvider.sendSMSCode(byPhone: phone)
+            controller.disableSMS()
+            //sleep(3)
+            //controller.enableSMS()
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 2000)) {
+                sleep(1)
+                controller.enableSMS()
+            }
+            
+            // показ экрана для ввода кода
+            let codeController = PhoneCodeController()
+            codeController.phone = phone
+            self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
+        }
+        
         
         return controller
     }

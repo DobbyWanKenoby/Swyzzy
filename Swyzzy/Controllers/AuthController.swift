@@ -5,7 +5,7 @@
 import UIKit
 import SnapKit
 
-protocol AuthControllerProtocol where Self: UIViewController {
+protocol AuthControllerProtocol: UIViewController {
     /// Флаг страны
     var countryImage: UIImage? { get set }
     /// Код страны
@@ -15,8 +15,17 @@ protocol AuthControllerProtocol where Self: UIViewController {
     /// Заменитель текста для текстового поля с номером телефона
     var countryPhonePlaceholder: String? { get set }
     
+    /// объект пользователя
+    //var user: UserProtocol! { get set }
+    
     /// Действие по нажатию на кнопку с кодом страны
     var doForCountryChange: (() -> Void)? { get set }
+    /// Дествие по нажатию на кнопку отправки кода
+    var sendSMSCodeByPhone: ((String) -> Void)? { get set }
+    
+    /// Запрещает отправку смс, блокирует кнопки
+    func disableSMS()
+    func enableSMS()
 }
 
 class AuthController: UIViewController, AuthControllerProtocol {
@@ -31,20 +40,19 @@ class AuthController: UIViewController, AuthControllerProtocol {
             phoneCodeView.configurationUpdateHandler = handler
         }
     }
-    
     var countryCode: String? {
         didSet {
             phoneCodeView.setTitle(self.countryCode, for: .normal)
         }
     }
-    
     var countryPhoneTemplate: String?
-    
     var countryPhonePlaceholder: String?
+    //var user: UserProtocol!
     
     // MARK: - Coordinator Callbacks
     
     var doForCountryChange: (() -> Void)? = nil
+    var sendSMSCodeByPhone: ((String) -> Void)? = nil
 
     // MARK: - View
     
@@ -85,6 +93,27 @@ class AuthController: UIViewController, AuthControllerProtocol {
     lazy private var sendCodeButton: SWButton = {
         let button = SWButton(frame: CGRect.zero)
         button.setTitle(Localization.AuthScreen.sendCodeButton.localized, for: .normal)
+        button.addAction(UIAction(handler: { _ in
+            let phone = "\(self.countryCode ?? "")\(self.phoneNumberTextField.text ?? "")"
+            self.sendSMSCodeByPhone?(phone)
+        }), for: .touchUpInside)
+        
+        let handler: UIButton.ConfigurationUpdateHandler = { button in // 1
+            switch button.state { // 2
+            case .disabled:
+                button.configuration?.title = ""
+                button.configuration?.showsActivityIndicator = true
+                button.configuration?.activityIndicatorColorTransformer = UIConfigurationColorTransformer({ _ in
+                    return .systemGray
+                })
+            default:
+                button.configuration?.title = Localization.AuthScreen.sendCodeButton.localized
+                button.configuration?.showsActivityIndicator = false
+            }
+        }
+        
+        button.configurationUpdateHandler = handler
+        
         return button
     }()
     
@@ -98,11 +127,6 @@ class AuthController: UIViewController, AuthControllerProtocol {
         stack.spacing = 20
         return stack
     }()
-    
-//    lazy private var phoneCodeView: PhoneCodeView = {
-//        let view = PhoneCodeView(image: UIImage(named: "Russia") ?? UIImage(), text: "+7")
-//        return view
-//    }()
     
     lazy private var phoneCodeView: UIButton = {
         
@@ -134,6 +158,16 @@ class AuthController: UIViewController, AuthControllerProtocol {
         return textfield
     }()
     
+    lazy private var moneyAttentionsLabel: UILabel = {
+        let label = UILabel()
+        label.text = Localization.AuthScreen.moneyForSMS.localized
+        label.font = label.font.withSize(11)
+        label.textAlignment = .center
+        label.textColor = UIColor(named: "TextColor")
+        label.numberOfLines = 0
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
@@ -153,6 +187,13 @@ class AuthController: UIViewController, AuthControllerProtocol {
             make.trailing.equalTo(-90)
         }
         
+        self.view.addSubview(moneyAttentionsLabel)
+        moneyAttentionsLabel.snp.makeConstraints { make in
+            make.leading.equalTo(30)
+            make.trailing.equalTo(-30)
+            make.topMargin.equalTo(self.phoneBlockStackView.snp.bottom).offset(20)
+        }
+        
         self.view.addSubview(footerLabel)
         footerLabel.snp.makeConstraints { make in
             make.bottom.equalTo(-60)
@@ -162,4 +203,12 @@ class AuthController: UIViewController, AuthControllerProtocol {
     
     }
     
+    // MARK: - Logic
+    
+    func disableSMS() {
+        sendCodeButton.isEnabled = false
+    }
+    func enableSMS() {
+        sendCodeButton.isEnabled = true
+    }
 }
