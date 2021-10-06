@@ -1,4 +1,5 @@
 import UIKit
+import SnapKit
 
 /*
  Контроллер, отображаемый в ходе работы InitializationCoordinator
@@ -17,14 +18,60 @@ class InitializationController: UIViewController, InitializationControllerProtoc
 
     var initializationDidEnd: (() -> Void)?
     
+    lazy private var logoImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "Title"))
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    lazy private var loadingIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.tintColor = .red
+        return view
+    }()
+    
+    override func loadView() {
+        super.loadView()
+        view.addSubview(logoImageView)
+        logoImageView.snp.makeConstraints { make in
+            make.leftMargin.rightMargin.equalTo(42)
+            make.center.equalToSuperview()
+        }
+        
+        self.view.addSubview(loadingIndicator)
+        loadingIndicator.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().offset(-50)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        loadingIndicator.startAnimating()
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        sleep(1)
-        initializationDidEnd?()
+        // TODO: Удалить фейковую паузу
+        sleep(2)
+        
+        UIView.animate(withDuration: 0.3) {
+            self.loadingIndicator.alpha = 0
+        }
+        
+        logoImageView.snp.removeConstraints()
+        logoImageView.snp.updateConstraints { make in
+            make.width.equalTo(UIScreen.main.bounds.width - 180)
+            make.top.equalTo(130)
+            make.trailing.equalTo(-90)
+        }
+        
+        UIView.animate(withDuration: 0.5) {
+            self.view.layoutIfNeeded()
+        } completion: { _ in
+            self.initializationDidEnd?()
+        }
+
     }
     
 }

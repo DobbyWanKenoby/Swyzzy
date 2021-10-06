@@ -6,8 +6,13 @@
   
 */
 
+// Общие
+"Base_attention" = "Attention";
+"Base_ok" = "OK";
+
 // Экран входа
-"sendCodeButton" = "Send Code";
-"aboutPolicy" = "By creating an account, you agree to our Terms of Service. More about how we use your data - in the Privacy Policy";
-"phoneNumber" = "Phone number";
-"moneyForSMS" = "Incoming SMS may be charged in accordance with the tariffs of your operator";
+"AuthScreen_sendCodeButton" = "Send Code";
+"AuthScreen_aboutPolicy" = "By creating an account, you agree to our Terms of Service. More about how we use your data - in the Privacy Policy";
+"AuthScreen_phoneNumber" = "Phone number";
+"AuthScreen_moneyForSMS" = "Incoming SMS may be charged in accordance with the tariffs of your operator";
+"AuthScreen_alertWrongPhoneNumber" = "Incorrectly entered phone number to which an SMS with an access code will be sent";

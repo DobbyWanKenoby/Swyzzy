@@ -56,8 +56,10 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
         
         backgroundLoadData()
         
-        if user.isAuth {
-            navigationPresenter.viewControllers.append(getAuthController())
+        if user.isAuth == false {
+            let authController = getAuthController()
+            authController.displayType = .withFadeAnimationExludeLogo
+            navigationPresenter.viewControllers.append(authController)
         } else {
             let controller = InitializationController.getInstance()
             controller.view.backgroundColor = .red
@@ -96,7 +98,9 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
             self.route(from: self.presenter!, to: countriesController, method: .presentCard, completion: nil)
         }
         controller.sendSMSCodeByPhone = { phone in
-            self.user.authProvider.sendSMSCode(byPhone: phone)
+            self.user.authProvider.sendSMSCode(byPhone: phone) { phone, verificationID, error in
+                print(phone, verificationID, error, separator: " - ")
+            }
             controller.disableSMS()
             //sleep(3)
             //controller.enableSMS()

@@ -23,9 +23,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="4r4-uj-qlE" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="BlS-mY-cRh"/>
-                            <constraint firstItem="4r4-uj-qlE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="50" id="Rox-Ms-bku"/>
+                            <constraint firstItem="4r4-uj-qlE" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="50" id="TDX-Xg-9i3"/>
                             <constraint firstItem="4r4-uj-qlE" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="Uzz-44-u5X"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="4r4-uj-qlE" secondAttribute="trailing" constant="50" id="yxp-db-LNC"/>
+                            <constraint firstAttribute="trailing" secondItem="4r4-uj-qlE" secondAttribute="trailing" constant="50" id="tiC-oa-M44"/>
                         </constraints>
                     </view>
                 </viewController>

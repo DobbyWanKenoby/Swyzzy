@@ -15,11 +15,15 @@ protocol AuthControllerProtocol: UIViewController {
     /// Заменитель текста для текстового поля с номером телефона
     var countryPhonePlaceholder: String? { get set }
     
+    /// Способ появления
+    var displayType: AuthControllerDisplayType { get set }
+    
     /// объект пользователя
     //var user: UserProtocol! { get set }
     
     /// Действие по нажатию на кнопку с кодом страны
     var doForCountryChange: (() -> Void)? { get set }
+    
     /// Дествие по нажатию на кнопку отправки кода
     var sendSMSCodeByPhone: ((String) -> Void)? { get set }
     
@@ -42,12 +46,14 @@ class AuthController: UIViewController, AuthControllerProtocol {
     }
     var countryCode: String? {
         didSet {
-            phoneCodeView.setTitle(self.countryCode, for: .normal)
+            phoneCodeView.setTitle("\(self.countryCode ?? "") ▼", for: .normal)
         }
     }
     var countryPhoneTemplate: String?
     var countryPhonePlaceholder: String?
     //var user: UserProtocol!
+    
+    var displayType: AuthControllerDisplayType = .simple
     
     // MARK: - Coordinator Callbacks
     
@@ -93,10 +99,6 @@ class AuthController: UIViewController, AuthControllerProtocol {
     lazy private var sendCodeButton: SWButton = {
         let button = SWButton(frame: CGRect.zero)
         button.setTitle(Localization.AuthScreen.sendCodeButton.localized, for: .normal)
-        button.addAction(UIAction(handler: { _ in
-            let phone = "\(self.countryCode ?? "")\(self.phoneNumberTextField.text ?? "")"
-            self.sendSMSCodeByPhone?(phone)
-        }), for: .touchUpInside)
         
         let handler: UIButton.ConfigurationUpdateHandler = { button in // 1
             switch button.state { // 2
@@ -139,7 +141,7 @@ class AuthController: UIViewController, AuthControllerProtocol {
         
         let button = UIButton(type: .system)
         button.configuration = configuration
-        button.setTitle(countryCode, for: .normal)
+        //button.setTitle("\(String(describing: countryCode)) ▼", for: .normal)
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(named: "TextFieldBorderColor")?.cgColor
         button.layer.cornerRadius = 8
@@ -168,9 +170,8 @@ class AuthController: UIViewController, AuthControllerProtocol {
         return label
     }()
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .white
+    override func loadView() {
+        super.loadView()
         
         self.view.addGestureRecognizer(tapRecognizer)
         
@@ -200,7 +201,56 @@ class AuthController: UIViewController, AuthControllerProtocol {
             make.leading.equalTo(30)
             make.trailing.equalTo(-30)
         }
+        
+        if displayType == .withFadeAnimationExludeLogo {
+            self.view.alpha = 0
+            phoneBlockStackView.alpha = 0
+            moneyAttentionsLabel.alpha = 0
+            footerLabel.alpha = 0
+        }
+        
+        addActionToSendButton()
+    }
     
+    private func addActionToSendButton() {
+        sendCodeButton.addAction(UIAction(handler: { _ in
+            let phone = "\(self.countryCode ?? "")\(self.phoneNumberTextField.text ?? "")"
+            
+            do {
+                try self.checkPhoneNumber()
+                self.sendSMSCodeByPhone?(phone)
+            } catch AuthError.phoneFieldIsEmpty {
+                self.showAlertWhenPhoneTextFieldIsEmpty()
+            } catch {}
+            
+        }), for: .touchUpInside)
+    }
+    
+    private func showAlertWhenPhoneTextFieldIsEmpty() {
+        let alert = UIAlertController(title: Localization.Base.attention.localized, message: Localization.AuthScreen.alertWrongPhoneNumber.localized, preferredStyle: .actionSheet)
+        let action = UIAlertAction(title: Localization.Base.ok.localized, style: .default) { _ in
+            self.phoneNumberTextField.becomeFirstResponder()
+        }
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .white
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if displayType == .withFadeAnimationExludeLogo {
+            self.view.alpha = 1
+            UIView.animate(withDuration: 0.3) {
+                self.phoneBlockStackView.alpha = 1
+                self.moneyAttentionsLabel.alpha = 1
+                self.footerLabel.alpha = 1
+            }
+        }
+
     }
     
     // MARK: - Logic
@@ -211,4 +261,29 @@ class AuthController: UIViewController, AuthControllerProtocol {
     func enableSMS() {
         sendCodeButton.isEnabled = true
     }
+}
+
+// MARK: - Проверка номера телефона перед отправкой
+
+extension AuthController {
+    
+    private func checkPhoneNumber() throws -> Void {
+        guard let phoneNumber = phoneNumberTextField.text, phoneNumber.isEmpty == false else {
+            throw AuthError.phoneFieldIsEmpty
+        }
+    }
+}
+
+/// Ошибки, возникающие на странице авторизации
+enum AuthError: Error {
+    /// Текстовое поле не заполнено
+    case phoneFieldIsEmpty
+}
+
+/// Тип отображения сцены
+enum AuthControllerDisplayType {
+    // все элементы сразу видны
+    case simple
+    // плавное появление (alpha = 1) всех элементов кроме логотипа
+    case withFadeAnimationExludeLogo
 }
