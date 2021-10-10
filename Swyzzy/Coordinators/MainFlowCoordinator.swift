@@ -1,5 +1,6 @@
 import UIKit
 import SwiftCoordinatorsKit
+import Swinject
 
 /*
  MainFlowCoordinator - Координатор основного потока выполнения экземпляра приложения.
@@ -9,6 +10,16 @@ import SwiftCoordinatorsKit
 protocol MainFlowCoordinatorProtocol: BasePresenter, Transmitter {}
 
 class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
+    
+    // объект-пользователь
+    private lazy var user: UserProtocol = {
+        DI.resolve(UserProtocol.self)!
+    }()
+    
+    private lazy var DI: Resolver = {
+        Assembler([UserAssembly()]).resolver
+    }()
+    
     var edit: ((Signal) -> Signal)?
     
     override var presenter: UIViewController? {
@@ -47,15 +58,28 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
         self.presenter = initializationCoordinator.presenter
         // Запуск потока InitializatorCoordinator
         initializationCoordinator.startFlow(finishCompletion:  {
-            
-            // По окончании работы координатора инициализации
-            // должен начать работу FunctionalCoordinator и отобразиться интерфейс приложения
-            let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
-            self.route(from: self.presenter!, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
-            functionalCoordinator.startFlow()
-            
+            // Определяем, авторизован ли пользователь
+            if self.user.isAuth == false {
+                self.createAndStartAuthCoordinator()
+            } else {
+                self.createAndStartFunctionalCoordinator()
+            }
         })
-
+    }
+    
+    private func createAndStartAuthCoordinator() {
+        let authCoordinator = AuthCoordinator(rootCoordinator: self)
+        self.presenter = authCoordinator.presenter
+        authCoordinator.startFlow(withWork: nil) {
+            self.createAndStartFunctionalCoordinator()
+        }
+    }
+    
+    private func createAndStartFunctionalCoordinator() {
+        // TODO: Тут должен быть вывод FunctionalCoordinator
+        //let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
+        //self.route(from: self.presenter!, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
+        //functionalCoordinator.startFlow()
     }
     
 }

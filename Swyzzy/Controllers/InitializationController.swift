@@ -53,7 +53,7 @@ class InitializationController: UIViewController, InitializationControllerProtoc
     
     override func viewDidAppear(_ animated: Bool) {
         // TODO: Удалить фейковую паузу
-        sleep(2)
+        //sleep(2)
         
         UIView.animate(withDuration: 0.3) {
             self.loadingIndicator.alpha = 0

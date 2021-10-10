@@ -38,6 +38,8 @@
 		E06AB6B82704E558008D1BEA /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B72704E558008D1BEA /* Country.swift */; };
 		E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B92704F3D5008D1BEA /* CountriesController.swift */; };
 		E07A0A58270E18AB00C9828A /* SwiftCoordinatorsKit in Frameworks */ = {isa = PBXBuildFile; productRef = E07A0A57270E18AB00C9828A /* SwiftCoordinatorsKit */; };
+		E082899A2712EC190060E4A8 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08289992712EC190060E4A8 /* AuthCoordinator.swift */; };
+		E082899C2712FD060060E4A8 /* SWCodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E082899B2712FD060060E4A8 /* SWCodeField.swift */; };
 		E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */; };
 		E0B42F482700B323003C9C7B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F472700B323003C9C7B /* User.swift */; };
 		E0B42F4A2700B3D9003C9C7B /* CountriesPhones.plist in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */; };
@@ -96,6 +98,8 @@
 		E06AB6B52704E45A008D1BEA /* InternationalizationSignal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternationalizationSignal.swift; sourceTree = "<group>"; };
 		E06AB6B72704E558008D1BEA /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		E06AB6B92704F3D5008D1BEA /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
+		E08289992712EC190060E4A8 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
+		E082899B2712FD060060E4A8 /* SWCodeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWCodeField.swift; sourceTree = "<group>"; };
 		E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternationalizationCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F472700B323003C9C7B /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CountriesPhones.plist; sourceTree = "<group>"; };
@@ -207,6 +211,7 @@
 				E04DCD3626F8FC19003B4F8E /* MainFlowCoordinator.swift */,
 				E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */,
 				E0B42F4D2700B42B003C9C7B /* FunctionalCoordinator.swift */,
+				E08289992712EC190060E4A8 /* AuthCoordinator.swift */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -245,6 +250,7 @@
 				E06AB6992702379F008D1BEA /* PhoneCodeView.swift */,
 				E06AB6A527024008008D1BEA /* SWTextField.swift */,
 				E06AB6A727024711008D1BEA /* SWButton.swift */,
+				E082899B2712FD060060E4A8 /* SWCodeField.swift */,
 				E04DCD4926F9044A003B4F8E /* Fonts */,
 			);
 			path = View;
@@ -439,8 +445,10 @@
 			files = (
 				E008C4D22700BCE50093B5FD /* SwinjectAssemblies.swift in Sources */,
 				E06AB6A827024711008D1BEA /* SWButton.swift in Sources */,
+				E082899C2712FD060060E4A8 /* SWCodeField.swift in Sources */,
 				F918FF96270A451500A74FBF /* AuthProvider.swift in Sources */,
 				E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */,
+				E082899A2712EC190060E4A8 /* AuthCoordinator.swift in Sources */,
 				E06AB69D27023856008D1BEA /* AuthController.swift in Sources */,
 				E04DCCF826F8F109003B4F8E /* AppDelegate.swift in Sources */,
 				E04DCD3026F8F6A7003B4F8E /* InitializationController.swift in Sources */,

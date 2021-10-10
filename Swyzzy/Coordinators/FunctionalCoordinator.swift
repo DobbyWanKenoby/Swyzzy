@@ -13,8 +13,6 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     
     // MARK: - Properties
     
-    // список стран для выбора кода
-    var countries: [Country] = []
     // объект-пользователь
     lazy var user: UserProtocol = {
         DI.resolve(UserProtocol.self)!
@@ -53,71 +51,17 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
-        
-        backgroundLoadData()
-        
-        if user.isAuth == false {
-            let authController = getAuthController()
-            authController.displayType = .withFadeAnimationExludeLogo
-            navigationPresenter.viewControllers.append(authController)
-        } else {
-            let controller = InitializationController.getInstance()
-            controller.view.backgroundColor = .red
-            navigationPresenter.viewControllers.append(controller)
-        }
-    }
-    
-    // Фоновая загрузка данных, требуемых в ходе работы координатора
-    private func backgroundLoadData() {
-        DispatchQueue.global(qos: .background).async {
-            let signal = InternationalizationSignal.getCountriesForSMS
-            self.broadcast(signal: signal, withAnswerToReceiver: nil) { answerSignal in
-                if case InternationalizationSignal.countries(let countries) = answerSignal {
-                    self.countries = countries
-                }
-            }
-        }
-    }
-    
-    private func getAuthController() -> AuthControllerProtocol {
-        let controller = AuthController.getInstance()
-        
-        controller.countryImage = UIImage(named: "Russia")
-        controller.countryCode = "+7"
-        controller.countryPhonePlaceholder = Localization.AuthScreen.phoneNumber.localized
-        //controller.user = user
-        
-        controller.doForCountryChange = {
-            let countriesController = CountriesController(style: .insetGrouped)
-            countriesController.countries = self.countries
-            countriesController.doAfterChoiseCountry = { country in
-                controller.countryCode = country.phoneCode
-                controller.countryImage = country.image
-                countriesController.dismiss(animated: true, completion: nil)
-            }
-            self.route(from: self.presenter!, to: countriesController, method: .presentCard, completion: nil)
-        }
-        controller.sendSMSCodeByPhone = { phone in
-            self.user.authProvider.sendSMSCode(byPhone: phone) { phone, verificationID, error in
-                print(phone, verificationID, error, separator: " - ")
-            }
-            controller.disableSMS()
-            //sleep(3)
-            //controller.enableSMS()
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 2000)) {
-                sleep(1)
-                controller.enableSMS()
-            }
-            
-            // показ экрана для ввода кода
-            let codeController = PhoneCodeController()
-            codeController.phone = phone
-            self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
-        }
-        
-        
-        return controller
-    }
 
+        
+//        if user.isAuth == false {
+//            let authController = getAuthController()
+//            authController.displayType = .withFadeAnimationExludeLogo
+//            navigationPresenter.viewControllers.append(authController)
+//        } else {
+//            let controller = InitializationController.getInstance()
+//            controller.view.backgroundColor = .red
+//            navigationPresenter.viewControllers.append(controller)
+//        }
+    }
     
 }

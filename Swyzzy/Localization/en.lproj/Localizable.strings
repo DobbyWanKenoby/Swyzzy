@@ -9,6 +9,7 @@
 // Общие
 "Base_attention" = "Attention";
 "Base_ok" = "OK";
+"Base_cancel" = "Cancel";
 
 // Экран входа
 "AuthScreen_sendCodeButton" = "Send Code";
@@ -16,3 +17,8 @@
 "AuthScreen_phoneNumber" = "Phone number";
 "AuthScreen_moneyForSMS" = "Incoming SMS may be charged in accordance with the tariffs of your operator";
 "AuthScreen_alertWrongPhoneNumber" = "Incorrectly entered phone number to which an SMS with an access code will be sent";
+
+// Экран подтверждения кода из СМС
+"AuthPhoneCodeScreen_title" = "Confirmation code";
+"AuthPhoneCodeScreen_subtitle" = "Enter the code, which sent to phone";
+"AuthPhoneCodeScreen_checkCode" = "Verification of the entered code";
