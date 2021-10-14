@@ -11,6 +11,9 @@ protocol PhoneCodeControllerProtocol: UIViewController {
     
     /// Номер телефона, на который отправлено СМС с кодом
     var phone: String! { get set }
+    
+    /// Объект пользователя
+    var user: UserProtocol! { get set }
 }
 
 class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
@@ -18,6 +21,7 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     // MARK: Properties
 
     var phone: String!
+    var user: UserProtocol!
     
     // MARK: Views
     
@@ -47,10 +51,10 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     }()
     
     private lazy var codeField: SWCodeField = {
-        let view = SWCodeField()
-        view.onCodeEntered = {
-            let alert = UIAlertController(title: "", message: Localization.AuthPhoneCodeScreen.checkCode.localized, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: Localization.Base.cancel.localized, style: .cancel) { _ in
+        let view = SWCodeField(blocks: 2, elementsInBlock: 3)
+        view.doAfterCodeDidEnter = { code in
+            let alert = UIAlertController(title: Localization.AuthPhoneCodeScreen.checkCode.localized, message: nil, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: Localization.Base.cancel.localized, style: .destructive) { _ in
                 alert.dismiss(animated: true) {
                     
                 }
@@ -58,10 +62,30 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
             alert.addAction(cancelAction)
             self.present(alert, animated: true) {
                 
+                // попытка авторизации
+                self.user.authProvider.tryAuthWith(code: self.codeField.code) { e in
+                    
+                    var errorMessage = ""
+                    if case AuthError.message(let message) = e {
+                        errorMessage = message
+                    }
+                    
+                    alert.dismiss(animated: false) {
+                        let errorAlert = UIAlertController(
+                            title: Localization.Error.error.localized,
+                            message: errorMessage,
+                            preferredStyle: .alert)
+                        let action = UIAlertAction(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
+                        errorAlert.addAction(action)
+                        self.present(errorAlert, animated: true, completion: nil)
+                    }
+                }
+
             }
         }
         return view
     }()
+    
     
     override func loadView() {
         super.loadView()
@@ -77,6 +101,7 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
         codeField.snp.makeConstraints { make in
             make.centerY.centerX.equalToSuperview()
             make.leadingMargin.trailingMargin.equalTo(40)
+            make.height.equalTo(50)
         }
     }
 

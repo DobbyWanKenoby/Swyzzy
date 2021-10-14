@@ -274,12 +274,6 @@ extension AuthController {
     }
 }
 
-/// Ошибки, возникающие на странице авторизации
-enum AuthError: Error {
-    /// Текстовое поле не заполнено
-    case phoneFieldIsEmpty
-}
-
 /// Тип отображения сцены
 enum AuthControllerDisplayType {
     // все элементы сразу видны

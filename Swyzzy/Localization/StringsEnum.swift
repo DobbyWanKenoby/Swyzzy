@@ -32,6 +32,12 @@ enum Localization {
         case cancel
     }
     
+    // Ошибка
+    enum Error: String, LocalizationEnumProtocol {
+        case error
+        case repeatAfterSomeTime
+    }
+    
     // Экран входа
     enum AuthScreen: String, LocalizationEnumProtocol {
         case sendCodeButton

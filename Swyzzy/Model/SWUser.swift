@@ -24,7 +24,7 @@ protocol UserProtocol {
     
 }
 
-class User: UserProtocol {
+class SWUser: UserProtocol {
     
     var authProvider: AuthProviderProtocol = AuthProvider()
     var isAuth: Bool {

@@ -1,51 +1,98 @@
-//
-//  SWCodeTextField.swift
-//  Swyzzy
-//
-//  Created by Vasily Usov on 10.10.2021.
-//
-
 import UIKit
-import Swinject
 
-final class SWCodeField: UIStackView {
+/**
+ SWCodeField - класс, обеспечивающий работу графического элемента "Поле для ввода кода"
+ */
+
+@IBDesignable
+open class SWCodeField: UIStackView {
     
-    // Когда код введен во все поля
-    var onCodeEntered: (() -> Void)?
+    // MARK: API
+    
+    /// Выполняется после того, как заполняются все текстовые поля
+    // Принимает code в качестве входного значения
+    public var doAfterCodeDidEnter: ((String) -> Void)?
+    /// Код в текстовых полях
+    public var code: String {
+        get {
+            enteredCode.map { String($0) }.joined()
+        }
+        set {
+            for (index, symbol) in newValue.enumerated() {
+                textFields[index].value?.text = "\(symbol)"
+            }
+        }
+    }
+    
+    // MARK: Properties
+    
+    // количество блоков с текстовыми полями
+    @IBInspectable
+    private var blocks: Int = 0 {
+        didSet {
+            createBlocks()
+        }
+    }
+    // количество текстовых полей в каждом блоке
+    @IBInspectable
+    private var elementsInBlock: Int = 0 {
+        didSet {
+            createBlocks()
+        }
+    }
     
     private var enteredCode: [Int] {
         var resultNumbers = [Int]()
         textFields.forEach { textField in
-            if let text = textField.text, let number = Int(text) {
+            if let text = textField.value?.text, let number = Int(text) {
                 resultNumbers.append(number)
             }
         }
         return resultNumbers
     }
     
-    private var textFields: [UITextField] = []
+    // Wrapper для хранения слабых ссылок на текстовые поля
+    class TFWrapper {
+        weak var value: UITextField?
+        init(_ tf: UITextField) {
+            value = tf
+        }
+    }
     
-    private lazy var bottomLine: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 4))
-        backgroundColor = .gray
-        view.layer.cornerRadius = 3
-        view.clipsToBounds = false
-        return view
-    }()
+    private var textFields: [TFWrapper] = []
     
-    convenience init() {
+    convenience public init(blocks: Int, elementsInBlock: Int) {
+        
+        guard blocks > 0, elementsInBlock > 0 else {
+            fatalError("SWCodeField: Blocks and elements count must more than 0")
+        }
+        
         self.init(frame: .zero)
         
-        // два дочерних стека с текстовыми полями
-        self.addArrangedSubview(getBlockStackView())
-        self.addArrangedSubview(getBlockStackView())
+        self.blocks = blocks
+        self.elementsInBlock = elementsInBlock
         
-        for subStackView in arrangedSubviews {
-            for _ in 1...3 {
-                
+        createBlocks()
+        configureMainStackView()
+    }
+    
+    // Создание блоков, включая вложенные элементы
+    private func createBlocks() {
+        guard blocks > 0, elementsInBlock > 0 else {
+            return
+        }
+        
+        removeArrangedViews()
+        textFields.removeAll()
+        
+        // создание блоков
+        (1...blocks).forEach { _ in
+            let block = getBlockStackView()
+            // создание элементов внутри блока
+            (1...elementsInBlock).forEach { elementIndex in
                 // текстовое поле
                 let textField = getTextField()
-                textFields.append(textField)
+                textFields.append(TFWrapper(textField))
 
                 // stack для объединения поля и линии
                 let stackView = UIStackView(arrangedSubviews: [textField, getBottomLine()])
@@ -53,10 +100,20 @@ final class SWCodeField: UIStackView {
                 stackView.axis = .vertical
                 stackView.spacing = 2
 
-                (subStackView as? UIStackView)?.addArrangedSubview(stackView)
+                block.addArrangedSubview(stackView)
             }
+            self.addArrangedSubview(block)
         }
-        
+    }
+    
+    private func removeArrangedViews() {
+        for view in arrangedSubviews {
+            view.removeFromSuperview()
+        }
+    }
+    
+    // Конфигурирование основного StackView
+    private func configureMainStackView() {
         self.axis = .horizontal
         self.spacing = 20
         self.distribution = .fillEqually
@@ -66,7 +123,7 @@ final class SWCodeField: UIStackView {
     private func getBlockStackView() -> UIStackView {
         let stackView = UIStackView()
         stackView.spacing = 5
-        stackView.axis = .horizontal
+        stackView.axis = self.axis
         stackView.distribution = .fillEqually
         return stackView
     }
@@ -78,7 +135,7 @@ final class SWCodeField: UIStackView {
         textField.onDeleteBackward = {
             self.removeLastNumber()
             let lastFieldIndex = self.enteredCode.count
-            self.textFields[lastFieldIndex].becomeFirstResponder()
+            self.textFields[lastFieldIndex].value?.becomeFirstResponder()
         }
         textField.keyboardType = .numberPad
         textField.addAction(getActionFor(textField: textField), for: .editingChanged)
@@ -88,6 +145,7 @@ final class SWCodeField: UIStackView {
         return textField
     }
     
+    // действие для текстового поля
     private func getActionFor(textField: UITextField) -> UIAction {
         let action = UIAction { action in
             guard let text = textField.text, let _ = Int(text) else {
@@ -95,10 +153,10 @@ final class SWCodeField: UIStackView {
             }
             let lastFieldIndex = self.enteredCode.count
             if lastFieldIndex < self.textFields.count && lastFieldIndex > 0  {
-                self.textFields[lastFieldIndex].becomeFirstResponder()
+                self.textFields[lastFieldIndex].value?.becomeFirstResponder()
             } else {
-                self.textFields.last?.resignFirstResponder()
-                self.onCodeEntered?()
+                self.textFields.last?.value?.resignFirstResponder()
+                self.doAfterCodeDidEnter?(self.code)
             }
         }
         return action
@@ -107,10 +165,8 @@ final class SWCodeField: UIStackView {
     // Линия под текстовым полем
     private func getBottomLine() -> UIView {
         let view = UIView()
-        view.snp.makeConstraints { make in
-            make.height.equalTo(3)
-        }
-        view.backgroundColor = UIColor(named: "UnderLineColor")
+        view.addConstraint(NSLayoutConstraint(item: view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 3))
+        view.backgroundColor = UIColor.lightGray
         view.layer.cornerRadius = 3
         return view
     }
@@ -120,8 +176,8 @@ final class SWCodeField: UIStackView {
     // Удаляет символ из последнего заполненного текстового поля
     private func removeLastNumber() {
         for textField in textFields.reversed() {
-            if let text = textField.text, text != "" {
-                textField.text =  ""
+            if let text = textField.value?.text, text != "" {
+                textField.value!.text =  ""
                 return
             }
         }
@@ -132,11 +188,11 @@ final class SWCodeField: UIStackView {
     private func activateCorrectTextField() {
         let lastFieldIndex = self.enteredCode.count
         if lastFieldIndex == textFields.count {
-            self.textFields.last?.becomeFirstResponder()
+            self.textFields.last?.value?.becomeFirstResponder()
         } else if lastFieldIndex == 0 {
-            self.textFields.first?.becomeFirstResponder()
+            self.textFields.first?.value?.becomeFirstResponder()
         } else {
-            self.textFields[lastFieldIndex].becomeFirstResponder()
+            self.textFields[lastFieldIndex].value?.becomeFirstResponder()
         }
     }
 
@@ -144,11 +200,11 @@ final class SWCodeField: UIStackView {
 
 extension SWCodeField: UITextFieldDelegate {
     
-    func textFieldDidBeginEditing(_ textField: UITextField) {
+    public func textFieldDidBeginEditing(_ textField: UITextField) {
         activateCorrectTextField()
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         // Если текст вставляется, например из пришедшей СМС
         if string.count > 1 {
             // TODO: Добавить обработку вставки текста
@@ -167,7 +223,7 @@ extension SWCodeField: UITextFieldDelegate {
 }
 
 // Кастомный класс текстового поля с переопределенным поведением по нажатию на бэкспейс
-final class SWCodeTextField: UITextField {
+fileprivate class SWCodeTextField: UITextField {
     
     var onDeleteBackward: (() -> Void)?
     

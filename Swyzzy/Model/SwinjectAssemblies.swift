@@ -10,6 +10,6 @@ import Swinject
 
 class UserAssembly: Assembly {
     func assemble(container: Container) {
-        container.register(UserProtocol.self) { _ in User() }
+        container.register(UserProtocol.self) { _ in SWUser() }
     }
 }

@@ -2,6 +2,8 @@
  AuthCoordinator - координатор, обеспечивающий авторизацию пользователя в приложении
  */
 
+// TODO: Автоматический показ экрана ввода кода, если код был отправлен ранее
+
 import UIKit
 import SwiftCoordinatorsKit
 import Swinject
@@ -14,6 +16,7 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
     
     // список стран для выбора кода
     var countries: [Country] = []
+    
     // объект-пользователь
     lazy var user: UserProtocol = {
         DI.resolve(UserProtocol.self)!
@@ -80,9 +83,10 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
         //controller.user = user
         
         // ------ TEST
-        let codeController = PhoneCodeController()
-        codeController.phone = "+774747747474"
-        self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
+//        let codeController = PhoneCodeController()
+//        codeController.phone = "+774747747474"
+//        codeController.user = self.user
+//        self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
         // ------ TEST
         
         controller.doForCountryChange = {
@@ -95,22 +99,41 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
             }
             self.route(from: self.presenter!, to: countriesController, method: .presentCard, completion: nil)
         }
+        
+        // Дейтсвия при отправке СМС
         controller.sendSMSCodeByPhone = { phone in
-            self.user.authProvider.sendSMSCode(byPhone: phone) { phone, verificationID, error in
-                print(phone, verificationID, error, separator: " - ")
-            }
+            // блокируем клавишу отправки
             controller.disableSMS()
-            //sleep(3)
-            //controller.enableSMS()
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime(uptimeNanoseconds: 2000)) {
-                sleep(1)
-                controller.enableSMS()
-            }
             
-            // показ экрана для ввода кода
-            let codeController = PhoneCodeController()
-            codeController.phone = phone
-            self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
+            // отправляем СМС
+            self.user.authProvider.sendSMSCode(byPhone: phone) {
+            
+            // в случае успешной отправки СМС
+                controller.enableSMS()
+                let codeController = PhoneCodeController()
+                codeController.phone = phone
+                codeController.user = self.user
+                self.route(from: self.presenter!, to: codeController, method: .presentCard, completion: nil)
+                
+            // в случае ошибки при отправке
+            } errorHandler: { e in
+                controller.enableSMS()
+                
+                var errorMessage = ""
+                if case AuthError.message(let message) = e {
+                    errorMessage = message
+                }
+                
+                let errorAlert = UIAlertController(
+                    title: Localization.Error.error.localized,
+                    message: errorMessage,
+                    preferredStyle: .alert)
+                let action = UIAlertAction(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
+                errorAlert.addAction(action)
+                controller.present(errorAlert, animated: true, completion: nil)
+                
+            }
+
         }
         
         
