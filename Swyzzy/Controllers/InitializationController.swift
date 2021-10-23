@@ -12,11 +12,22 @@ import SnapKit
 protocol InitializationControllerProtocol where Self: UIViewController {
     // замыкание, определяющее действие в конце инициализации
     var initializationDidEnd: (() -> Void)? { get set }
+    // тип отображения
+    var displayType: [InitializationControllerDisplayType] { get set }
+}
+
+// Тип отображеняи контроллера
+enum InitializationControllerDisplayType {
+    // с индикатором загрузки
+    case withActivityIndicator
+    // с анимацией названия (укзжает вверх)
+    case withLogoAnimationTop
 }
 
 class InitializationController: UIViewController, InitializationControllerProtocol {
 
     var initializationDidEnd: (() -> Void)?
+    var displayType: [InitializationControllerDisplayType] = []
     
     lazy private var logoImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "Title"))
@@ -48,22 +59,28 @@ class InitializationController: UIViewController, InitializationControllerProtoc
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        loadingIndicator.startAnimating()
+        if displayType.contains(.withActivityIndicator) {
+            loadingIndicator.startAnimating()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         // TODO: Удалить фейковую паузу
         //sleep(2)
         
-        UIView.animate(withDuration: 0.3) {
-            self.loadingIndicator.alpha = 0
+        if displayType.contains(.withActivityIndicator) {
+            UIView.animate(withDuration: 0.3) {
+                self.loadingIndicator.alpha = 0
+            }
         }
         
-        logoImageView.snp.removeConstraints()
-        logoImageView.snp.updateConstraints { make in
-            make.width.equalTo(UIScreen.main.bounds.width - 180)
-            make.top.equalTo(130)
-            make.trailing.equalTo(-90)
+        if displayType.contains(.withLogoAnimationTop) {
+            logoImageView.snp.removeConstraints()
+            logoImageView.snp.updateConstraints { make in
+                make.width.equalTo(UIScreen.main.bounds.width - 180)
+                make.top.equalTo(130)
+                make.trailing.equalTo(-90)
+            }
         }
         
         UIView.animate(withDuration: 0.5) {
@@ -71,6 +88,7 @@ class InitializationController: UIViewController, InitializationControllerProtoc
         } completion: { _ in
             self.initializationDidEnd?()
         }
+            
 
     }
     

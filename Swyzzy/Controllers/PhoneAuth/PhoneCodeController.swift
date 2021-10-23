@@ -14,6 +14,9 @@ protocol PhoneCodeControllerProtocol: UIViewController {
     
     /// Объект пользователя
     var user: UserProtocol! { get set }
+    
+    /// В случае успешного ввода кода
+    var doAfterCorrectCodeDidEnter: (() -> Void)? { get set }
 }
 
 class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
@@ -22,6 +25,10 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
 
     var phone: String!
     var user: UserProtocol!
+    
+    // MARK: Callbacks
+    
+    var doAfterCorrectCodeDidEnter: (() -> Void)? = nil
     
     // MARK: Views
     
@@ -63,9 +70,16 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
             self.present(alert, animated: true) {
                 
                 // попытка авторизации
-                self.user.authProvider.tryAuthWith(code: self.codeField.code) { e in
-                    
+                self.user.authProvider.tryAuthWith(code: self.codeField.code) {
+                // в случае успешного ввода КОРРЕКТНОГО кода
+                    alert.dismiss(animated: true) {
+                        self.doAfterCorrectCodeDidEnter?()
+                    }
+                // в случае каких-лиюо ошибок
+                } errorHandler: { e in
                     var errorMessage = ""
+                    
+                    // в случае ошибки в коде (или других ошибок, вроде спама)
                     if case AuthError.message(let message) = e {
                         errorMessage = message
                     }

@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E06E67B92718C6FF00CB1995"
-               BuildableName = "SwyzzyNotAuth.app"
-               BlueprintName = "SwyzzyNotAuth"
+               BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
+               BuildableName = "Swyzzy with Deauth.app"
+               BlueprintName = "Swyzzy with Deauth"
                ReferencedContainer = "container:Swyzzy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E06E67B92718C6FF00CB1995"
-            BuildableName = "SwyzzyNotAuth.app"
-            BlueprintName = "SwyzzyNotAuth"
+            BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
+            BuildableName = "Swyzzy with Deauth.app"
+            BlueprintName = "Swyzzy with Deauth"
             ReferencedContainer = "container:Swyzzy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -68,9 +68,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E06E67B92718C6FF00CB1995"
-            BuildableName = "SwyzzyNotAuth.app"
-            BlueprintName = "SwyzzyNotAuth"
+            BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
+            BuildableName = "Swyzzy with Deauth.app"
+            BlueprintName = "Swyzzy with Deauth"
             ReferencedContainer = "container:Swyzzy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

@@ -11,38 +11,38 @@ import Swinject
 import Firebase
 import FirebaseAuth
 
-protocol InitializatorCoordinatorProtocol: BasePresenter, Transmitter {}
+protocol InitializatorCoordinatorProtocol: BasePresenter, Transmitter {
+	// Swinject Resolver
+	var resolver: Resolver! { get set }
+}
 
 final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorProtocol {
+
+	var resolver: Resolver!
     
     // объект-пользователь
     lazy var user: UserProtocol = {
-        DI.resolve(UserProtocol.self)!
+        resolver.resolve(UserProtocol.self)!
     }()
     
     var edit: ((Signal) -> Signal)?
     
-    private lazy var DI: Resolver = {
-        Assembler([UserAssembly()]).resolver
-    }()
-    
-    
     override init(rootCoordinator: Coordinator? = nil) {
         super.init(rootCoordinator: rootCoordinator)
         presenter = InitializationController.getInstance()
+        (presenter as! InitializationController).displayType.append(.withActivityIndicator)
+        if !user.isAuth {
+            (presenter as! InitializationController).displayType.append(.withLogoAnimationTop)
+        }
     }
     
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
         
-        print(user.isAuth)
-        
         // Автоматическая деавторизация для target "SwyzzyNotAuth"
         if ProcessInfo.processInfo.environment["auto_deauth"] == "true" {
             user.authProvider.deauth()
         }
-        
-        print(user.isAuth)
         
         (self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
             // действия на контроллере, которые будут выполнены в конце инициализации

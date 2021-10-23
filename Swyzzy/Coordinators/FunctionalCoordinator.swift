@@ -7,22 +7,23 @@ import UIKit
 import SwiftCoordinatorsKit
 import Swinject
 
-protocol FunctionalCoordinatorProtocol: BasePresenter, Transmitter {}
+protocol FunctionalCoordinatorProtocol: BasePresenter, Transmitter {
+	// Swinject Resolver
+	var resolver: Resolver! { get set }
+}
 
 final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol {
     
     // MARK: - Properties
+
+	var resolver: Resolver!
     
     // объект-пользователь
     lazy var user: UserProtocol = {
-        DI.resolve(UserProtocol.self)!
+        resolver.resolve(UserProtocol.self)!
     }()
     
     var edit: ((Signal) -> Signal)?
-    
-    private lazy var DI: Resolver = {
-        Assembler([UserAssembly()]).resolver
-    }()
     
     // используется для доступа к презентеру, как к Navigation Controller
     // свойство - синтаксический сахар
@@ -32,7 +33,7 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     
     required init(rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
         super.init(presenter: nil, rootCoordinator: rootCoordinator, options: options)
-        presenter = UINavigationController()
+        createControllers()
     }
     
     required public init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil) {
@@ -42,7 +43,7 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     @discardableResult
     public override init(rootCoordinator: Coordinator? = nil) {
         super.init(presenter: nil, rootCoordinator: rootCoordinator, options: [])
-        presenter = UINavigationController()
+        createControllers()
     }
     
     public override init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
@@ -52,16 +53,12 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
     override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
         super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
-        
-//        if user.isAuth == false {
-//            let authController = getAuthController()
-//            authController.displayType = .withFadeAnimationExludeLogo
-//            navigationPresenter.viewControllers.append(authController)
-//        } else {
-//            let controller = InitializationController.getInstance()
-//            controller.view.backgroundColor = .red
-//            navigationPresenter.viewControllers.append(controller)
-//        }
+    }
+    
+    private func createControllers() {
+        presenter = FunctionalTabBarController.getInstance()
+        let moreController = MoreController.getInstance()
+        (presenter as! UITabBarController).setViewControllers([moreController], animated: true)
     }
     
 }

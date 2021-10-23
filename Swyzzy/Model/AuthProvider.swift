@@ -32,7 +32,7 @@ protocol AuthProviderProtocol {
     /// Отправка кода подтверждения. Возвращает token
     ///
     /// - Parameter code: введенный пользователем код
-    func tryAuthWith(code: String, errorHandler: ((Error) -> Void)?)
+    func tryAuthWith(code: String, successHandler: (() -> Void)?, errorHandler: ((Error) -> Void)?)
 }
 
 class AuthProvider: AuthProviderProtocol {
@@ -85,7 +85,7 @@ class AuthProvider: AuthProviderProtocol {
         })
     }
     
-    func tryAuthWith(code: String, errorHandler: ((Error) -> Void)?) {
+    func tryAuthWith(code: String, successHandler: (() -> Void)?, errorHandler: ((Error) -> Void)?) {
         guard let verificationID = fbPhoneVerificationID else {
             errorHandler?(AuthError.message(Localization.Error.repeatAfterSomeTime.localized))
             return
@@ -100,9 +100,7 @@ class AuthProvider: AuthProviderProtocol {
                 errorHandler?(AuthError.message(error.localizedDescription))
                 return
             }
-            print(self.isAuth)
-            //self.fbUser = authResult?.user
-            print(self.isAuth)
+            successHandler?()
         }
     
     }

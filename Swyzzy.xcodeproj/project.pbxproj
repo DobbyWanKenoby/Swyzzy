@@ -86,6 +86,14 @@
 		E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F4D2700B42B003C9C7B /* FunctionalCoordinator.swift */; };
 		E0B42F542700B681003C9C7B /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = E0B42F532700B681003C9C7B /* Swinject */; };
 		E0C704F72700B8FC00E72437 /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F552700B80D003C9C7B /* TitanOne-Regular.ttf */; };
+		E0D715B52723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */; };
+		E0D715B62723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */; };
+		E0D715B827240E2100AEA0FC /* CoordinatorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B727240E2100AEA0FC /* CoordinatorExtension.swift */; };
+		E0D715B927240E2100AEA0FC /* CoordinatorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B727240E2100AEA0FC /* CoordinatorExtension.swift */; };
+		E0FD1535271DF5950014022B /* FunctionalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */; };
+		E0FD1536271DF62E0014022B /* FunctionalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */; };
+		E0FD1539271DFAB70014022B /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1538271DFAB70014022B /* MoreController.swift */; };
+		E0FD153A271DFAB90014022B /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1538271DFAB70014022B /* MoreController.swift */; };
 		F918FF96270A451500A74FBF /* AuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F918FF95270A451500A74FBF /* AuthProvider.swift */; };
 /* End PBXBuildFile section */
 
@@ -156,6 +164,10 @@
 		E0B42F4B2700B3E8003C9C7B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E0B42F4D2700B42B003C9C7B /* FunctionalCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F552700B80D003C9C7B /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitanOne-Regular.ttf"; sourceTree = "<group>"; };
+		E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppPublisher + AppEvents.swift"; sourceTree = "<group>"; };
+		E0D715B727240E2100AEA0FC /* CoordinatorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorExtension.swift; sourceTree = "<group>"; };
+		E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalTabBarController.swift; sourceTree = "<group>"; };
+		E0FD1538271DFAB70014022B /* MoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
 		F918FF95270A451500A74FBF /* AuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -299,6 +311,7 @@
 			children = (
 				E04DCD2F26F8F6A7003B4F8E /* InitializationController.swift */,
 				E06E67B22718B8C300CB1995 /* PhoneAuth */,
+				E0FD1537271DFA730014022B /* Functional */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -336,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				E06AB6B02702517B008D1BEA /* StringExtension.swift */,
+				E0D715B727240E2100AEA0FC /* CoordinatorExtension.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -387,8 +401,18 @@
 				F918FF95270A451500A74FBF /* AuthProvider.swift */,
 				E008C4D12700BCE50093B5FD /* SwinjectAssemblies.swift */,
 				E06AB6B72704E558008D1BEA /* Country.swift */,
+				E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		E0FD1537271DFA730014022B /* Functional */ = {
+			isa = PBXGroup;
+			children = (
+				E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */,
+				E0FD1538271DFAB70014022B /* MoreController.swift */,
+			);
+			path = Functional;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -590,16 +614,20 @@
 				E06AB6A827024711008D1BEA /* SWButton.swift in Sources */,
 				E082899C2712FD060060E4A8 /* SWCodeField.swift in Sources */,
 				F918FF96270A451500A74FBF /* AuthProvider.swift in Sources */,
+				E0FD1535271DF5950014022B /* FunctionalTabBarController.swift in Sources */,
 				E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */,
 				E082899A2712EC190060E4A8 /* AuthCoordinator.swift in Sources */,
 				E06AB69D27023856008D1BEA /* AuthController.swift in Sources */,
 				E06E67B52718BAFA00CB1995 /* AuthErrors.swift in Sources */,
 				E04DCCF826F8F109003B4F8E /* AppDelegate.swift in Sources */,
+				E0FD1539271DFAB70014022B /* MoreController.swift in Sources */,
 				E04DCD3026F8F6A7003B4F8E /* InitializationController.swift in Sources */,
 				E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */,
 				E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */,
 				E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */,
+				E0D715B52723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */,
 				E0B42F482700B323003C9C7B /* SWUser.swift in Sources */,
+				E0D715B827240E2100AEA0FC /* CoordinatorExtension.swift in Sources */,
 				E06AB6B82704E558008D1BEA /* Country.swift in Sources */,
 				E06AB6A627024008008D1BEA /* SWTextField.swift in Sources */,
 				E03E643F27064BAA0095BC0E /* PhoneCodeController.swift in Sources */,
@@ -636,16 +664,20 @@
 				E06E67DD2718C81E00CB1995 /* SWButton.swift in Sources */,
 				E06E67DE2718C81E00CB1995 /* SWCodeField.swift in Sources */,
 				E06E67DF2718C81E00CB1995 /* AuthProvider.swift in Sources */,
+				E0FD1536271DF62E0014022B /* FunctionalTabBarController.swift in Sources */,
 				E06E67E02718C81E00CB1995 /* StringExtension.swift in Sources */,
 				E06E67E12718C81E00CB1995 /* AuthCoordinator.swift in Sources */,
 				E06E67E22718C81E00CB1995 /* AuthController.swift in Sources */,
 				E06E67E32718C81E00CB1995 /* AuthErrors.swift in Sources */,
 				E06E67E42718C81E00CB1995 /* AppDelegate.swift in Sources */,
+				E0FD153A271DFAB90014022B /* MoreController.swift in Sources */,
 				E06E67E52718C81E00CB1995 /* InitializationController.swift in Sources */,
 				E06E67E62718C81E00CB1995 /* CountriesController.swift in Sources */,
 				E06E67E72718C81E00CB1995 /* FunctionalCoordinator.swift in Sources */,
 				E06E67E82718C81E00CB1995 /* InternationalizationCoordinator.swift in Sources */,
+				E0D715B62723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */,
 				E06E67E92718C81E00CB1995 /* SWUser.swift in Sources */,
+				E0D715B927240E2100AEA0FC /* CoordinatorExtension.swift in Sources */,
 				E06E67EA2718C81E00CB1995 /* Country.swift in Sources */,
 				E06E67EB2718C81E00CB1995 /* SWTextField.swift in Sources */,
 				E06E67EC2718C81E00CB1995 /* PhoneCodeController.swift in Sources */,
