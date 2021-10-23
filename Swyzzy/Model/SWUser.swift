@@ -29,6 +29,10 @@ protocol UserProtocol {
 
 class SWUser: UserProtocol {
 
+	init() {
+		print(12313)
+	}
+
 	var fb: User? {
 		Auth.auth().currentUser
 	}

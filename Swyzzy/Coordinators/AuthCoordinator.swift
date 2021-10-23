@@ -9,55 +9,52 @@ import SwiftCoordinatorsKit
 import Swinject
 import Combine
 
-protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {
-	// Swinject Resolver
-	var resolver: Resolver! { get set }
-}
+protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {}
 
 final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
+
+	// MARK: - Input
+
+	var resolver: Resolver {
+		didSet {
+			print(444444)
+		}
+	}
 
 	// MARK: - Properties
 
 	// список стран для выбора кода
-	var countries: [Country] = []
-
-	var resolver: Resolver!
+	private var countries: [Country] = []
 
 	// объект-пользователь
-	lazy var user: UserProtocol = {
-		resolver.resolve(UserProtocol.self)!
-	}()
+	private var user: UserProtocol {
+		return resolver.resolve(UserProtocol.self)!
+	}
 
 	// основной издатель приложения
-	private lazy var appPublisher: PassthroughSubject<AppEvents, Never> = {
-		resolver.resolve(PassthroughSubject<AppEvents, Never>.self)!
-	}()
+	private var appPublisher: PassthroughSubject<AppEvents, Never> {
+		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
+	}
+
+	// MARK: - Others
 
 	var edit: ((Signal) -> Signal)?
 
-	// используется для доступа к презентеру, как к Navigation Controller
-	// свойство - синтаксический сахар
-	var navigationPresenter: UINavigationController {
-		presenter as! UINavigationController
+	lazy var _presenter: UIViewController? = {
+		UINavigationController()
+	}()
+	override var presenter: UIViewController? {
+		get {
+			_presenter
+		}
+		set {
+			fatalError("[AuthCoodinator] Setting of presenter is not available")
+		}
 	}
 
-	required init(rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
-		super.init(presenter: nil, rootCoordinator: rootCoordinator, options: options)
-		presenter = UINavigationController()
-	}
-
-	required public init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil) {
-		fatalError("init(presenter:rootCoordinator:) has not been implemented")
-	}
-
-	@discardableResult
-	public override init(rootCoordinator: Coordinator? = nil) {
-		super.init(presenter: nil, rootCoordinator: rootCoordinator, options: [])
-		presenter = UINavigationController()
-	}
-
-	public override init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
-		fatalError("init(presenter:rootCoordinator:options:) has not been implemented")
+	init(rootCoordinator: Coordinator, resolver: Resolver) {
+		self.resolver = resolver
+		super.init(rootCoordinator: rootCoordinator)
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
@@ -67,7 +64,7 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 
 		let authController = getAuthController()
 		authController.displayType = .withFadeAnimationExludeLogo
-		navigationPresenter.viewControllers.append(authController)
+		(presenter as! UINavigationController).viewControllers.append(authController)
 	}
 
 	// Фоновая загрузка данных, требуемых в ходе работы координатора
@@ -114,8 +111,8 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 				codeController.user = self.user
 				codeController.doAfterCorrectCodeDidEnter = {
 
-					self.appPublisher.send(.userLogin)
-					print(111)
+					let event = AppEvents.userLogin(onController: codeController)
+					self.appPublisher.send(event)
 
 					//let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
 					//self.route(from: codeController, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}

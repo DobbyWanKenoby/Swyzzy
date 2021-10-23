@@ -10,24 +10,26 @@ import Combine
 
 protocol MainFlowCoordinatorProtocol: BasePresenter, Transmitter {
 	// Swinject Resolver
-	var resolver: Resolver! { get set }
+	var resolver: Resolver { get set }
 }
 
 class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 
+	// MARK: -Input
+
+	var resolver: Resolver
+
+	// MARK: - Others
+
 	// объект-пользователь
-	private lazy var user: UserProtocol = {
+	private var user: UserProtocol {
 		resolver.resolve(UserProtocol.self)!
-	}()
+	}
 
 	// основной издатель приложения
-	private lazy var appPublisher: PassthroughSubject<AppEvents, Never> = {
-		resolver.resolve(PassthroughSubject<AppEvents, Never>.self)!
-	}()
-
-	var resolver: Resolver! = {
-		Assembler([MainAssembly()]).resolver
-	}()
+	private var appPublisher: PassthroughSubject<AppEvents, Never> {
+		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
+	}
 
 	// подписчик на события основного издателя приложения
 	private var appEventsSubscriber: AnyCancellable!
@@ -35,45 +37,26 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 	var edit: ((Signal) -> Signal)?
 
 	override var presenter: UIViewController? {
-		didSet {
-			(rootCoordinator as! SceneCoordinator).presenter = presenter
+		get {
+			(rootCoordinator as! SceneCoordinator).presenter
+		}
+		set {
+			(rootCoordinator as! SceneCoordinator).presenter = newValue
 		}
 	}
 
-	required
-	init(rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
-		super.init(presenter: nil, rootCoordinator: rootCoordinator, options: options)
-		appEventsSubscriber = appPublisher.sink(receiveValue: { event in
-			switch event {
-			case .userLogin:
-				print("123123123")
-			}
-		})
-
-	}
-
-	required
-	public init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil) {
-		fatalError("init(presenter:rootCoordinator:) has not been implemented")
-	}
-
-	required
-	public override init(presenter: UIViewController?, rootCoordinator: Coordinator? = nil, options: [CoordinatorOption] = []) {
-		fatalError("init(presenter:rootCoordinator:options:) has not been implemented")
-	}
-
-	@discardableResult
-	public override convenience init(rootCoordinator: Coordinator? = nil) {
-		self.init(rootCoordinator: rootCoordinator, options: [])
-		//super.init(presenter: nil, rootCoordinator: rootCoordinator, options: [])
+	init(rootCoordinator: Coordinator, resolver: Resolver) {
+		self.resolver = resolver
+		super.init(rootCoordinator: rootCoordinator)
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
+		createSubscribers()
+
 		// Запускаем координатор Инициализации
-		let initializationCoordinator = InitializatorCoordinator(rootCoordinator: self)
-		initializationCoordinator.resolver = resolver
+		let initializationCoordinator = InitializatorCoordinator(rootCoordinator: self, resolver: resolver)
 		// С помощью следующей строки кода
 		// базовый контроллер InitializatorCoordinator станет базовым контроллером Scene Coordinator
 		self.presenter = initializationCoordinator.presenter
@@ -88,9 +71,24 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 		})
 	}
 
+	// Создание подписчиков
+	private func createSubscribers() {
+		appEventsSubscriber = appPublisher.sink(receiveValue: { event in
+			switch event {
+			case .userLogin (let controller):
+				let v = UIViewController()
+				v.view.backgroundColor = .red
+				let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
+				functionalCoordinator.resolver = self.resolver
+
+				self.route(from: controller, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
+				functionalCoordinator.startFlow()
+			}
+		})
+	}
+
 	private func createAndStartAuthCoordinator() {
-		let authCoordinator = AuthCoordinator(rootCoordinator: self)
-		authCoordinator.resolver = resolver
+		let authCoordinator = AuthCoordinator(rootCoordinator: self, resolver: self.resolver)
 		self.presenter = authCoordinator.presenter
 		authCoordinator.startFlow(withWork: nil) {
 			self.createAndStartFunctionalCoordinator()

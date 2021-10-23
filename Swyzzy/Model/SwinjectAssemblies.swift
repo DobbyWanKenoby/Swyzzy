@@ -11,15 +11,19 @@ import Combine
 
 class MainAssembly: Assembly {
 
-	static var shared = MainAssembly()
-
 //	private static let user: UserProtocol =
 //	private static let appPublisher =
 
 	func assemble(container: Container) {
+
 		// Объект, описывающий пользователя
-		container.register(UserProtocol.self) { _ in SWUser() }
+		container.register(UserProtocol.self) { _ in
+			return SWUser()
+		}.inObjectScope(.container)
+
 		// Объект, описывающий основного издателя (Combine) приложения
-		container.register(PassthroughSubject<AppEvents, Never>.self) { _ in PassthroughSubject<AppEvents, Never>() }
+		container.register(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher") { _ in
+			PassthroughSubject<AppEvents, Never>()
+		}.inObjectScope(.container)
 	}
 }

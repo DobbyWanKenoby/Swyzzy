@@ -7,10 +7,19 @@
 
 import UIKit
 import SwiftCoordinatorsKit
+import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+
+	lazy var resolver: Resolver = {
+		Assembler([MainAssembly()]).resolver
+	}()
+
+	var user: UserProtocol {
+		resolver.resolve(UserProtocol.self)!
+	}
     
     /// Главный координатор сцены
     lazy var coordinator: SceneCoordinator = {
@@ -24,9 +33,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             return
         }
         window.windowScene = windowScene
-        
-        // создание координатора основного потока
-        let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator)
+
+		// Автоматическая деавторизация для target "SwyzzyNotAuth"
+		if ProcessInfo.processInfo.environment["auto_deauth"] == "true" {
+			user.authProvider.deauth()
+		}
+
+		// создание координатора основного потока
+		let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, resolver: resolver)
+        //let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator)
         mainFlowCoordinator.startFlow()
         window.makeKeyAndVisible()
         
