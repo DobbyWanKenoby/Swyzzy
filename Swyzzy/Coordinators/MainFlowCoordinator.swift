@@ -2,6 +2,7 @@ import UIKit
 import SwiftCoordinatorsKit
 import Swinject
 import Combine
+import Firebase
 
 /*
  MainFlowCoordinator - Координатор основного потока выполнения экземпляра приложения.
@@ -52,54 +53,124 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
-
 		createSubscribers()
-
-		// Запускаем координатор Инициализации
-		let initializationCoordinator = InitializatorCoordinator(rootCoordinator: self, resolver: resolver)
-		// С помощью следующей строки кода
-		// базовый контроллер InitializatorCoordinator станет базовым контроллером Scene Coordinator
-		self.presenter = initializationCoordinator.presenter
-		// Запуск потока InitializatorCoordinator
-		initializationCoordinator.startFlow(finishCompletion:  {
-			// Определяем, авторизован ли пользователь
-			if self.user.isAuth == false {
-				self.createAndStartAuthCoordinator()
-			} else {
-				self.createAndStartFunctionalCoordinator()
-			}
-		})
+		createInitialzationCoordinator()
 	}
 
 	// Создание подписчиков
 	private func createSubscribers() {
+		// Подписчик на событие "Пользователь залогинился"
 		appEventsSubscriber = appPublisher.sink(receiveValue: { event in
 			switch event {
-			case .userLogin (let controller):
-				let v = UIViewController()
-				v.view.backgroundColor = .red
-				let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
-				functionalCoordinator.resolver = self.resolver
-
-				self.route(from: controller, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
-				functionalCoordinator.startFlow()
+			case .userLogin (let sourceController):
+//				self.appPublisher.send(AppEvents.showEvent(onScreen: sourceController,
+//														   title: L.Base.wait.localized,
+//														   message: L.Loading.loading.localized))
+				self.showNextController(presentFrom: sourceController)
+			default:
+				return
 			}
 		})
 	}
 
-	private func createAndStartAuthCoordinator() {
-		let authCoordinator = AuthCoordinator(rootCoordinator: self, resolver: self.resolver)
-		self.presenter = authCoordinator.presenter
-		authCoordinator.startFlow(withWork: nil) {
-			self.createAndStartFunctionalCoordinator()
+	// Отображает следующий экран
+	private func showNextController(presentFrom: UIViewController) {
+		let coordinator = getNextCoordinator()
+		// для каждого из будущих контроллеров может быть своя логика отображения
+
+		if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
+			// координатор авторизации должен анложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
+			self.presenter = authCoordinator.presenter
+			authCoordinator.startFlow()
+
+		} else if let initCoordinator = coordinator as? InitializatorCoordinator {
+			initCoordinator.startFlow {
+				self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
+			} finishCompletion:  {
+				self.showNextController(presentFrom: initCoordinator.presenter!)
+			}
+
+		} else if let funcCoordinator = coordinator as? FunctionalCoordinatorProtocol {
+			funcCoordinator.startFlow {
+				self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+			} finishCompletion: {}
+
+		} else {
+			coordinator.startFlow {
+				self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+			}
+
 		}
 	}
 
-	private func createAndStartFunctionalCoordinator() {
-		let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
-		functionalCoordinator.resolver = resolver
-		self.route(from: self.presenter!, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
-		functionalCoordinator.startFlow()
+	// Возвращает следующий по порядку координатор
+	private func getNextCoordinator() -> Coordinator{
+		// если не авторизован
+		guard user.isAuth else {
+			return getAuthCoordinator()
+		}
+		// если данные еще не загружены
+		guard user.dataDidUpdate else {
+			return getInitialCoordinator()
+		}
+		//если входит впервые
+		if checkUserNeedEnterBaseData() {
+			return getHelloCoordinator()
+		} else {
+			return getFunctionalCoordinator()
+		}
+	}
+
+	private func checkUserNeedEnterBaseData() -> Bool {
+		guard let id = user.fb?.uid else {
+			return false
+		}
+
+		let docRef = Firestore.firestore().collection("users").document("\(id)")
+		var result = false
+		docRef.getDocument { (document, error) in
+			guard let document = document else {
+				self.sendErrorMessage(error?.localizedDescription ?? "")
+				return
+			}
+			result = document.exists
+		}
+		return result
+	}
+
+	private func sendErrorMessage(_ text: String) {
+		let button = AppEventAlertButton(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
+		appPublisher.send(AppEvents.showEvent(onScreen: self.presenter!, title: Localization.Error.error.localized, message: text, buttons: [button]))
+	}
+
+	private func getHelloCoordinator() -> Coordinator {
+		return HelloCoordinator(rootCoordinator: self, resolver: resolver)
+	}
+
+	// Возвращает координтор авторизации
+	private func getAuthCoordinator() -> Coordinator {
+		return AuthCoordinator(rootCoordinator: self, resolver: resolver)
+	}
+
+	// Возвращает функциональный координатор
+	private func getFunctionalCoordinator() -> Coordinator {
+		return FunctionalCoordinator(rootCoordinator: self, resolver: resolver)
+	}
+
+	fileprivate func createInitialzationCoordinator() {
+		// Запускаем координатор Инициализации
+		let initializationCoordinator = getInitialCoordinator() as! InitializatorCoordinator
+		// С помощью следующей строки кода
+		// базовый контроллер InitializatorCoordinator станет базовым контроллером Scene Coordinator
+		self.presenter = initializationCoordinator.presenter
+		// Запуск потока InitializatorCoordinator
+		initializationCoordinator.startFlow(finishCompletion:  { [unowned self] in
+			self.showNextController(presentFrom: presenter!)
+		})
+	}
+
+	private func getInitialCoordinator() -> Coordinator {
+		return InitializatorCoordinator(rootCoordinator: self, resolver: resolver)
 	}
 
 }

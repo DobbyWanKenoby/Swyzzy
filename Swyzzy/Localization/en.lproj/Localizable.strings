@@ -10,10 +10,15 @@
 "Base_attention" = "Attention";
 "Base_ok" = "OK";
 "Base_cancel" = "Cancel";
+"Base_wait" = "Please wait";
 
 // Ошибка
 "Error_error" = "Error";
 "Error_repeatAfterSomeTime" = "Try to repeat after a while";
+"Error_networkDisconnected" = "Nenetwork unavailable. Try to repeat after a while";
+
+// Загрузка данных
+"Loading_loading" = "We loading important data";
 
 // Экран входа
 "AuthScreen_sendCodeButton" = "Send Code";
@@ -25,4 +30,4 @@
 // Экран подтверждения кода из СМС
 "AuthPhoneCodeScreen_title" = "Confirmation code";
 "AuthPhoneCodeScreen_subtitle" = "Enter the code, which sent to phone";
-"AuthPhoneCodeScreen_checkCode" = "Verification of the entered code";
+"AuthPhoneCodeScreen_checkCode" = "We verificating the entered code";

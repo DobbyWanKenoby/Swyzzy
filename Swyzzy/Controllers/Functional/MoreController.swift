@@ -7,7 +7,9 @@
 
 import UIKit
 
-class MoreController: UITableViewController {
+protocol MoreControllerProtocol: UITableViewController {}
+
+class MoreController: UITableViewController, MoreControllerProtocol {
 
     override func viewDidLoad() {
         super.viewDidLoad()

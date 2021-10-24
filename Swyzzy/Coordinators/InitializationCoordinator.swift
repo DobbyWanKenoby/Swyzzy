@@ -16,13 +16,13 @@ protocol InitializatorCoordinatorProtocol: BasePresenter, Transmitter {}
 final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorProtocol {
 
 	private var resolver: Resolver
-    
-    // объект-пользователь
-	private var user: UserProtocol {
-        resolver.resolve(UserProtocol.self)!
-    }
-    
-    var edit: ((Signal) -> Signal)?
+
+	// объект-пользователь
+	lazy private var user: UserProtocol = {
+		resolver.resolve(UserProtocol.self)!
+	}()
+
+	var edit: ((Signal) -> Signal)?
 
 	init(rootCoordinator: Coordinator, resolver: Resolver) {
 		self.resolver = resolver
@@ -33,19 +33,26 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 			(presenter as! InitializationController).displayType.append(.withLogoAnimationTop)
 		}
 	}
-    
-    override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
-        super.startFlow(withWork: work, finishCompletion: finishCompletion)
-        
-        (self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
-            // действия на контроллере, которые будут выполнены в конце инициализации
-            self.finishFlow()
-        }
-        // тут могут быть различные операции инициализации
-        // вроде загрузки данных из сети
-        // при этом можно настроить обмен данными с базовым вью контроллером
-        // чтобы отображать процесс выполнения операций
 
-    }
+	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
+		super.startFlow(withWork: work, finishCompletion: finishCompletion)
+
+		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
+			// действия на контроллере, которые будут выполнены в конце инициализации
+			self.finishFlow()
+		}
+
+		loadDataForAuthUser()
+
+		// тут могут быть различные операции инициализации
+		// вроде загрузки данных из сети
+		// при этом можно настроить обмен данными с базовым вью контроллером
+		// чтобы отображать процесс выполнения операций
+
+	}
+
+	private func loadDataForAuthUser() {
+		user.dataDidUpdate = true
+	}
 
 }

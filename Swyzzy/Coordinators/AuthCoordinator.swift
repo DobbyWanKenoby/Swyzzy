@@ -105,18 +105,12 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 			self.user.authProvider.sendSMSCode(byPhone: phone) {
 
 				// в случае успешной отправки СМС
-
 				let codeController = PhoneCodeController()
 				codeController.phone = phone
 				codeController.user = self.user
 				codeController.doAfterCorrectCodeDidEnter = {
-
 					let event = AppEvents.userLogin(onController: codeController)
 					self.appPublisher.send(event)
-
-					//let functionalCoordinator = FunctionalCoordinator(rootCoordinator: self)
-					//self.route(from: codeController, to: functionalCoordinator.presenter!, method: .presentFullScreen) {}
-					//functionalCoordinator.startFlow()
 				}
 				self.route(from: self.presenter!, to: codeController, method: .presentCard) {
 					controller.enableSMS()

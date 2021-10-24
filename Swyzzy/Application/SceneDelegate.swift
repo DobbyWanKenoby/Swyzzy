@@ -39,13 +39,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			user.authProvider.deauth()
 		}
 
+		// Запуск потока координатор
+		coordinator.startFlow(withWork: {
+			self.createAlertCoordinator()
+		})
+
 		// создание координатора основного потока
 		let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, resolver: resolver)
         //let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator)
         mainFlowCoordinator.startFlow()
         window.makeKeyAndVisible()
-        
     }
+
+	// создаем координатор всплывающих сообщений
+	fileprivate func createAlertCoordinator() {
+		let alertCoordinator = AlertCoordinator(rootCoordinator: coordinator, resolver: resolver)
+		alertCoordinator.startFlow(withWork: nil, finishCompletion: nil)
+	}
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

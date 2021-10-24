@@ -23,6 +23,8 @@ extension LocalizationEnumProtocol where Self: RawRepresentable {
 
 // Перечисление с элементами для локализации
 
+typealias L = Localization
+
 enum Localization {
     
     // Общие для приложения
@@ -30,13 +32,20 @@ enum Localization {
         case attention
         case ok
         case cancel
+		case wait
     }
     
     // Ошибка
     enum Error: String, LocalizationEnumProtocol {
         case error
         case repeatAfterSomeTime
+		case networkDisconnected
     }
+
+	// Загрузка данных
+	enum Loading: String, LocalizationEnumProtocol {
+		case loading
+	}
     
     // Экран входа
     enum AuthScreen: String, LocalizationEnumProtocol {

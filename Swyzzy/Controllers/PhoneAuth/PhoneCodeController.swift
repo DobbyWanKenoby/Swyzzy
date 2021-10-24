@@ -60,13 +60,7 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     private lazy var codeField: SWCodeField = {
         let view = SWCodeField(blocks: 2, elementsInBlock: 3)
         view.doAfterCodeDidEnter = { code in
-            let alert = UIAlertController(title: Localization.AuthPhoneCodeScreen.checkCode.localized, message: nil, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: Localization.Base.cancel.localized, style: .destructive) { _ in
-                alert.dismiss(animated: true) {
-                    
-                }
-            }
-            alert.addAction(cancelAction)
+			let alert = UIAlertController(title: Localization.Base.wait.localized, message: L.AuthPhoneCodeScreen.checkCode.localized, preferredStyle: .alert)
             self.present(alert, animated: true) {
                 
                 // попытка авторизации

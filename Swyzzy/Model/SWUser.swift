@@ -9,6 +9,7 @@
 
 import Foundation
 import FirebaseAuth
+import FirebaseFirestore
 
 protocol UserProtocol {
 
@@ -22,16 +23,17 @@ protocol UserProtocol {
 	/// firebase-пользователь
 	var fb: User? { get }
 
+	/// Указывает на то, загрузились ли данные после авторизации/входа пользователя
+	var dataDidUpdate: Bool { get set }
+
 	/// Деавторизовать пользователя
 	func deauth()
+
+
 
 }
 
 class SWUser: UserProtocol {
-
-	init() {
-		print(12313)
-	}
 
 	var fb: User? {
 		Auth.auth().currentUser
@@ -41,6 +43,8 @@ class SWUser: UserProtocol {
 	var isAuth: Bool {
 		authProvider.isAuth
 	}
+
+	var dataDidUpdate: Bool = false
 
 	func deauth() {
 		authProvider.deauth()
