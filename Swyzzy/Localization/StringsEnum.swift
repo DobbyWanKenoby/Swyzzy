@@ -33,6 +33,7 @@ enum Localization {
         case ok
         case cancel
 		case wait
+		case repeatit
     }
     
     // Ошибка

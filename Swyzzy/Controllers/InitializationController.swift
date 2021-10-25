@@ -10,10 +10,14 @@ import SnapKit
  */
 
 protocol InitializationControllerProtocol where Self: UIViewController {
-	// замыкание, определяющее действие в конце инициализации
-	var initializationDidEnd: (() -> Void)? { get set }
 	// тип отображения
 	var displayType: [InitializationControllerDisplayType] { get set }
+	// работа, которую необходимо выполнить после появления экрана инициализации
+	// тут необходимо указать влю логику загрузки данных
+	var startInitializationWork: (()->Void)? { get set }
+	// старт финальной анимации и работа, которую необходимо после этого выполнить
+	// тут необходимо прописать экран, к которому будет происходить переход далее
+	func stopInitialization(withWork : (()->Void)?)
 }
 
 // Тип отображеняи контроллера
@@ -25,9 +29,8 @@ enum InitializationControllerDisplayType {
 }
 
 class InitializationController: UIViewController, InitializationControllerProtocol {
-
-	var initializationDidEnd: (() -> Void)?
 	var displayType: [InitializationControllerDisplayType] = []
+	var startInitializationWork: (()->Void)?
 
 	lazy private var logoImageView: UIImageView = {
 		let imageView = UIImageView(image: UIImage(named: "Title"))
@@ -65,9 +68,10 @@ class InitializationController: UIViewController, InitializationControllerProtoc
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		// TODO: Удалить фейковую паузу
-		//sleep(2)
+		startInitializationWork?()
+	}
 
+	func stopInitialization(withWork work: (()->Void)?) {
 		if displayType.contains(.withActivityIndicator) {
 			UIView.animate(withDuration: 0.3) {
 				self.loadingIndicator.alpha = 0
@@ -86,10 +90,7 @@ class InitializationController: UIViewController, InitializationControllerProtoc
 		UIView.animate(withDuration: 0.5) {
 			self.view.layoutIfNeeded()
 		} completion: { _ in
-			self.initializationDidEnd?()
+			work?()
 		}
-
-
 	}
-
 }

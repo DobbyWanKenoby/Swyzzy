@@ -11,6 +11,7 @@
 "Base_ok" = "OK";
 "Base_cancel" = "Cancel";
 "Base_wait" = "Please wait";
+"Base_repeatit" = "Repeat";
 
 // Ошибка
 "Error_error" = "Error";

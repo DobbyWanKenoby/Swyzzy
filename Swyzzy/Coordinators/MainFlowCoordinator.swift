@@ -75,72 +75,77 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 
 	// Отображает следующий экран
 	private func showNextController(presentFrom: UIViewController) {
-		let coordinator = getNextCoordinator()
-		// для каждого из будущих контроллеров может быть своя логика отображения
 
-		if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
-			// координатор авторизации должен анложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
-			self.presenter = authCoordinator.presenter
-			authCoordinator.startFlow()
+		takeNextCoordinatorAnd { coordinator in
+			if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
+				// координатор авторизации должен анложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
+				self.presenter = authCoordinator.presenter
+				authCoordinator.startFlow()
 
-		} else if let initCoordinator = coordinator as? InitializatorCoordinator {
-			initCoordinator.startFlow {
-				self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
-			} finishCompletion:  {
-				self.showNextController(presentFrom: initCoordinator.presenter!)
+			} else if let initCoordinator = coordinator as? InitializatorCoordinator {
+				initCoordinator.startFlow {
+					self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
+				} finishCompletion:  {
+					self.showNextController(presentFrom: initCoordinator.presenter!)
+				}
+
+			} else if let funcCoordinator = coordinator as? FunctionalCoordinatorProtocol {
+				funcCoordinator.startFlow {
+					self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+				} finishCompletion: {}
+
+			} else {
+				coordinator.startFlow {
+					self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+				}
 			}
-
-		} else if let funcCoordinator = coordinator as? FunctionalCoordinatorProtocol {
-			funcCoordinator.startFlow {
-				self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
-			} finishCompletion: {}
-
-		} else {
-			coordinator.startFlow {
-				self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
-			}
-
 		}
 	}
 
-	// Возвращает следующий по порядку координатор
-	private func getNextCoordinator() -> Coordinator{
-		// если не авторизован
+	private func takeNextCoordinatorAnd(doWork closure: @escaping (Coordinator) -> Void) {
 		guard user.isAuth else {
-			return getAuthCoordinator()
+			closure(getAuthCoordinator())
+			return
 		}
+
 		// если данные еще не загружены
 		guard user.dataDidUpdate else {
-			return getInitialCoordinator()
+			closure(getInitialCoordinator())
+			return
 		}
-		//если входит впервые
-		if checkUserNeedEnterBaseData() {
-			return getHelloCoordinator()
-		} else {
-			return getFunctionalCoordinator()
-		}
-	}
 
-	private func checkUserNeedEnterBaseData() -> Bool {
+		// Проверяем, а есть ли данные пользователя в базе
 		guard let id = user.fb?.uid else {
-			return false
+			return
 		}
 
 		let docRef = Firestore.firestore().collection("users").document("\(id)")
-		var result = false
 		docRef.getDocument { (document, error) in
+			guard error == nil else {
+				self.sendErrorMessage(error?.localizedDescription ?? "")
+				return
+			}
+
 			guard let document = document else {
 				self.sendErrorMessage(error?.localizedDescription ?? "")
 				return
 			}
-			result = document.exists
+			// Если данных нет, то грузим экран приветствия
+			if !document.exists {
+				closure(self.getHelloCoordinator())
+			// Если данные есть, то грузим основной экран
+			} else {
+				closure(self.getFunctionalCoordinator())
+			}
 		}
-		return result
 	}
 
 	private func sendErrorMessage(_ text: String) {
-		let button = AppEventAlertButton(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
-		appPublisher.send(AppEvents.showEvent(onScreen: self.presenter!, title: Localization.Error.error.localized, message: text, buttons: [button]))
+		let alert = AppEvents.ShowEventType.withTitleAndText(title: Localization.Error.error.localized, message: text)
+		let button = AppEvents.ShowEventButton(title: Localization.Base.repeatit.localized, style: .cancel, handler: {
+			self.showNextController(presentFrom: self.presenter!)
+		})
+		appPublisher.send(AppEvents.showEvent(onScreen: self.presenter!, type: alert, buttons: [button]))
 	}
 
 	private func getHelloCoordinator() -> Coordinator {

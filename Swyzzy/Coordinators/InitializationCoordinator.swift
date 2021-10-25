@@ -37,22 +37,25 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
-		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
-			// действия на контроллере, которые будут выполнены в конце инициализации
-			self.finishFlow()
+		guard let initController = self.presenter as? InitializationControllerProtocol else {
+			return
 		}
 
-		loadDataForAuthUser()
-
-		// тут могут быть различные операции инициализации
-		// вроде загрузки данных из сети
-		// при этом можно настроить обмен данными с базовым вью контроллером
-		// чтобы отображать процесс выполнения операций
+		initController.startInitializationWork = {
+			// TODO: Убрать фейковую паузу
+			//sleep(2)
+			self.loadDataForAuthUser()
+			initController.stopInitialization {
+				self.finishFlow()
+			}
+		}
 
 	}
 
 	private func loadDataForAuthUser() {
-		user.dataDidUpdate = true
+		if user.isAuth {
+			user.dataDidUpdate = true
+		}
 	}
 
 }

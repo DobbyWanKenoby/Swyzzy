@@ -47,8 +47,12 @@ final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol {
 	private func createSubscribers() {
 		appEventsSubscriber = appPublisher.sink(receiveValue: { event in
 			switch event {
-			case .showEvent(onScreen: let sourceController, title: let title, message: let message, buttons: let buttons):
-				self.showAlert(onScreen: sourceController, title: title, message: message, buttons: buttons)
+			case .showEvent(onScreen: let sourceController, type: let eventType, buttons: let buttons):
+				if case .withTitleAndText(let title, let message) = eventType {
+					DispatchQueue.main.async {
+						self.showAlert(onScreen: sourceController, title: title, message: message, buttons: buttons)
+					}
+				}
 			default:
 				return
 			}
@@ -56,7 +60,7 @@ final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol {
 	}
 
 	// Отображает всплывающее окно с сообщением
-	private func showAlert(onScreen: UIViewController, title: String, message: String, buttons: [AppEventAlertButton]) {
+	private func showAlert(onScreen: UIViewController, title: String, message: String, buttons: [AppEvents.ShowEventButton]) {
 		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		for b in buttons {
 			let action = UIAlertAction(title: b.title, style: b.style, handler: { _ in

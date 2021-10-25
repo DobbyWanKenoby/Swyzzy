@@ -5,7 +5,7 @@ Swyzzy - социальная сеть, основанная на ведении
 ## Используемый стек технологий
 
 - Swift
-- MVP + `SwiftCoordinatorsKit`
+- MVP + [`SwiftCoordinatorsKit`](https://github.com/DobbyWanKenoby/SwiftCoordinatorsKit)
 - `Swinject`
 - `UIKit` + `SnapKit`
 - `Combine`

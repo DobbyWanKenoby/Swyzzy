@@ -40,10 +40,10 @@ final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol {
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
-		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
-			// действия на контроллере, которые будут выполнены в конце инициализации
-			self.finishFlow()
-		}
+//		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
+//			// действия на контроллере, которые будут выполнены в конце инициализации
+//			self.finishFlow()
+//		}
 
 	}
 
