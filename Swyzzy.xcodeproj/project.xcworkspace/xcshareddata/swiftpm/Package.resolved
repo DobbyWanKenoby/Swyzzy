@@ -110,15 +110,6 @@
         }
       },
       {
-        "package": "SWCodeField",
-        "repositoryURL": "https://github.com/DobbyWanKenoby/SWCodeField",
-        "state": {
-          "branch": "main",
-          "revision": "ebfc15e49f3e7b73a4e3987214b61477acf5b490",
-          "version": null
-        }
-      },
-      {
         "package": "SwiftProtobuf",
         "repositoryURL": "https://github.com/apple/swift-protobuf.git",
         "state": {

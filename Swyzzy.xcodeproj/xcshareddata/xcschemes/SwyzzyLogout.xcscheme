@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1320"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
-               BuildableName = "Swyzzy with Deauth.app"
-               BlueprintName = "Swyzzy with Deauth"
+               BlueprintIdentifier = "E04DCCF326F8F109003B4F8E"
+               BuildableName = "Swyzzy.app"
+               BlueprintName = "Swyzzy"
                ReferencedContainer = "container:Swyzzy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,15 +44,15 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
-            BuildableName = "Swyzzy with Deauth.app"
-            BlueprintName = "Swyzzy with Deauth"
+            BlueprintIdentifier = "E04DCCF326F8F109003B4F8E"
+            BuildableName = "Swyzzy.app"
+            BlueprintName = "Swyzzy"
             ReferencedContainer = "container:Swyzzy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "auto_deauth"
+            key = "auto_logout"
             value = "true"
             isEnabled = "YES">
          </EnvironmentVariable>
@@ -68,9 +68,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E06E67CE2718C81E00CB1995"
-            BuildableName = "Swyzzy with Deauth.app"
-            BlueprintName = "Swyzzy with Deauth"
+            BlueprintIdentifier = "E04DCCF326F8F109003B4F8E"
+            BuildableName = "Swyzzy.app"
+            BlueprintName = "Swyzzy"
             ReferencedContainer = "container:Swyzzy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

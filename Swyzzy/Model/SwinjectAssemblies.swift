@@ -9,21 +9,28 @@ import Foundation
 import Swinject
 import Combine
 
-class MainAssembly: Assembly {
+class BaseAssembly: Assembly {
+    func assemble(container: Container) {
+        // Объект, описывающий основного издателя (Combine) приложения
+        container.register(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher") { _ in
+            PassthroughSubject<AppEvents, Never>()
+        }.inObjectScope(.container)
+    }
+}
 
-//	private static let user: UserProtocol =
-//	private static let appPublisher =
+class AuthProvideAssembly: Assembly {
+    func assemble(container: Container) {
+        container.register(AuthProviderProtocol.self) { r in
+            BaseFirebaseAuthProvider(resolver: r)
+        }.inObjectScope(.container)
+    }
+}
 
-	func assemble(container: Container) {
-
-		// Объект, описывающий пользователя
-		container.register(UserProtocol.self) { _ in
-			return SWUser()
-		}.inObjectScope(.container)
-
-		// Объект, описывающий основного издателя (Combine) приложения
-		container.register(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher") { _ in
-			PassthroughSubject<AppEvents, Never>()
-		}.inObjectScope(.container)
-	}
+class UserAssembly: Assembly {
+    func assemble(container: Container) {
+        container.register(UserProtocol.self) { r in
+            let authProvider = r.resolve(AuthProviderProtocol.self)! as AuthProviderProtocol
+            return AppUser(authProvider: authProvider, uid: authProvider.uid!)
+        }.inObjectScope(.container)
+    }
 }

@@ -12,12 +12,11 @@ protocol PhoneCodeControllerProtocol: UIViewController {
     /// Номер телефона, на который отправлено СМС с кодом
     var phone: String! { get set }
     
-    /// Объект пользователя
-    var user: UserProtocol! { get set }
-    
-    /// В случае успешного ввода кода
-    var doAfterCorrectCodeDidEnter: (() -> Void)? { get set }
+    /// Выполнить, когда будет введен код
+    var doAfterCodeDidEnter: ((AuthByPhoneCode) -> Void)? { get set }
 }
+
+typealias AuthByPhoneCode = String
 
 class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     
@@ -28,7 +27,7 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     
     // MARK: Callbacks
     
-    var doAfterCorrectCodeDidEnter: (() -> Void)? = nil
+    var doAfterCodeDidEnter: ((AuthByPhoneCode) -> Void)?
     
     // MARK: Views
     
@@ -60,36 +59,7 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     private lazy var codeField: SWCodeField = {
         let view = SWCodeField(blocks: 2, elementsInBlock: 3)
         view.doAfterCodeDidEnter = { code in
-			let alert = UIAlertController(title: Localization.Base.wait.localized, message: L.AuthPhoneCodeScreen.checkCode.localized, preferredStyle: .alert)
-            self.present(alert, animated: true) {
-                
-                // попытка авторизации
-                self.user.authProvider.tryAuthWith(code: self.codeField.code) {
-                // в случае успешного ввода КОРРЕКТНОГО кода
-                    alert.dismiss(animated: true) {
-                        self.doAfterCorrectCodeDidEnter?()
-                    }
-                // в случае каких-лиюо ошибок
-                } errorHandler: { e in
-                    var errorMessage = ""
-                    
-                    // в случае ошибки в коде (или других ошибок, вроде спама)
-                    if case AuthError.message(let message) = e {
-                        errorMessage = message
-                    }
-                    
-                    alert.dismiss(animated: false) {
-                        let errorAlert = UIAlertController(
-                            title: Localization.Error.error.localized,
-                            message: errorMessage,
-                            preferredStyle: .alert)
-                        let action = UIAlertAction(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
-                        errorAlert.addAction(action)
-                        self.present(errorAlert, animated: true, completion: nil)
-                    }
-                }
-
-            }
+            self.doAfterCodeDidEnter?(code)
         }
         return view
     }()
