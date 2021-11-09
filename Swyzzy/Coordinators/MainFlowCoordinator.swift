@@ -13,8 +13,10 @@ protocol MainFlowCoordinatorProtocol: BasePresenter, Transmitter {
     init(rootCoordinator: Coordinator, assembler: Assembler)
 }
 
-class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
-    
+class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol, Loggable {
+    var logResolver: Resolver {
+        resolver
+    }
     private var assembler: Assembler
     private var resolver: Resolver {
         assembler.resolver
@@ -62,17 +64,15 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
+        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
-        Task(priority: TaskPriority.high) {
-            createSubscribers()
-            showNextController(presentFrom: self.presenter!)
-        }
-        
+        createSubscribers()
+        showNextController(presentFrom: self.presenter!)
 	}
 
 	// Создание подписчиков
-	private func createSubscribers() {
-		// Подписчик на событие "Пользователь залогинился"
+    private func createSubscribers() {
+        // Подписчик на событие "Пользователь залогинился"
         appEventsSubscriber = appPublisher.sink(receiveValue: { event in
             switch event {
             case .userLogin (let sourceController):
@@ -83,48 +83,57 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
                 return
             }
         })
-	}
+    }
 
 	// Отображает следующий экран
-	private func showNextController(presentFrom: UIViewController) {
+    private func showNextController(presentFrom: UIViewController) {
 
-		takeNextCoordinatorAnd { coordinator in
-			if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
-				// координатор авторизации должен наложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
-				self.presenter = authCoordinator.presenter
-				authCoordinator.startFlow()
+        self.takeNextCoordinatorWithWork { coordinator in
+            if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
+                // координатор авторизации должен наложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
+                self.presenter = authCoordinator.presenter
+                authCoordinator.startFlow()
 
-			} else if let initCoordinator = coordinator as? InitializatorCoordinator {
-				initCoordinator.startFlow {
+            } else if let initCoordinator = coordinator as? InitializatorCoordinator {
+                initCoordinator.startFlow {
+                    self.logger.log(.routeViewController, description: "From \(presentFrom) to \(initCoordinator.presenter!)")
                     if presentFrom is PhoneCodeController {
                         self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
                     } else {
+
                         self.presenter = initCoordinator.presenter!
                     }
-				} finishCompletion:  {
-					self.showNextController(presentFrom: initCoordinator.presenter!)
-				}
+                } finishCompletion:  {
+                    self.showNextController(presentFrom: initCoordinator.presenter!)
+                }
 
-			} else if let funcCoordinator = coordinator as? FunctionalCoordinatorProtocol {
-				funcCoordinator.startFlow {
-					self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
-				} finishCompletion: {}
+            } else if let funcCoordinator = coordinator as? FunctionalCoordinatorProtocol {
+                funcCoordinator.startFlow {
+                    self.logger.log(.routeViewController, description: "From \(presentFrom) to \((coordinator as! Presenter).presenter!)")
+                    self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+                } finishCompletion: {}
 
-			} else {
-				coordinator.startFlow {
-					self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
-				}
-			}
-		}
-	}
+            } else {
+                coordinator.startFlow {
+                    self.logger.log(.routeViewController, description: "From \(presentFrom) to \((coordinator as! Presenter).presenter!)")
+                    self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+                }
+            }
+        }
+    }
 
-	private func takeNextCoordinatorAnd(doWork closure: @escaping (Coordinator) -> Void) {
+	private func takeNextCoordinatorWithWork(_ closure: @escaping (Coordinator) -> Void) {
         
         if let user = user {
-            if user.dataNeedSync {
+            if user.needDownloadDataFromExternalStorage {
                 closure(getInitialCoordinator())
+            } else if !user.needDownloadDataFromExternalStorage && user.needEnterPrimaryData {
+                closure(getHelloCoordinator())
+            } else if !user.needDownloadDataFromExternalStorage && !user.needEnterPrimaryData {
+                print(7777)
+                // functional coordinator
             } else {
-                
+                print("Этот блок не должен быть запущен =)")
             }
         } else {
             if !dataDidSync {

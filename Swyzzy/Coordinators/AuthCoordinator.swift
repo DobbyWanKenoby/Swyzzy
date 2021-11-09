@@ -9,9 +9,11 @@ import SwiftCoordinatorsKit
 import Swinject
 import Combine
 
-protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {}
+protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {
+    init(rootCoordinator: Coordinator, resolver: Resolver)
+}
 
-final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
+final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
 
 	// MARK: - Properties
 
@@ -22,7 +24,9 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 	private var appPublisher: PassthroughSubject<AppEvents, Never> {
 		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
 	}
-    
+    var logResolver: Resolver {
+        resolver
+    }
     private var resolver: Resolver
 
 	// MARK: - Others
@@ -47,6 +51,7 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
+        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
 		loadingData()

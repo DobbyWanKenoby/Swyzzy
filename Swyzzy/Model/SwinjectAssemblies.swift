@@ -15,6 +15,13 @@ class BaseAssembly: Assembly {
         container.register(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher") { _ in
             PassthroughSubject<AppEvents, Never>()
         }.inObjectScope(.container)
+
+        // Логгер
+        container.register(Logger.self) { r in
+            let l = Logger(type: .console, resolver: r)
+            l.prefix = "[Swyzzy App]".localized()
+            return l
+        }.inObjectScope(.container)
     }
 }
 
@@ -31,6 +38,14 @@ class UserAssembly: Assembly {
         container.register(UserProtocol.self) { r in
             let authProvider = r.resolve(AuthProviderProtocol.self)! as AuthProviderProtocol
             return AppUser(authProvider: authProvider, uid: authProvider.uid!)
+        }.inObjectScope(.container)
+    }
+}
+
+class StorageAssembly: Assembly {
+    func assemble(container: Container) {
+        container.register(StorageProviderProtocol.self) { r in
+            FirebaseStorageProvider(resolver: r)
         }.inObjectScope(.container)
     }
 }

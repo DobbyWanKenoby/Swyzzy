@@ -17,12 +17,14 @@ import Combine
  */
 
 protocol AlertCoordinatorProtocol: BaseCoordinator {
-	var resolver: Resolver { get set }
+    init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol {
-
-	var resolver: Resolver
+final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol, Loggable {
+    var logResolver: Resolver {
+        resolver
+    }
+	private var resolver: Resolver
 
 	// основной издатель приложения
 	private var appPublisher: PassthroughSubject<AppEvents, Never> {

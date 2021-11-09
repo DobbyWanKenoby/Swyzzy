@@ -9,15 +9,17 @@ import Swinject
 import Combine
 
 protocol FunctionalCoordinatorProtocol: BasePresenter, Transmitter {
-	// Swinject Resolver
-	var resolver: Resolver! { get set }
+    init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol {
+final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol, Loggable {
 
 	// MARK: - Properties
 
-	var resolver: Resolver!
+    var logResolver: Resolver {
+        resolver
+    }
+	private var resolver: Resolver!
 
 	// объект-пользователь
 	lazy var user: UserProtocol = {
@@ -44,6 +46,7 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol 
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
+        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 	}
 

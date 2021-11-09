@@ -14,18 +14,35 @@ import FirebaseFirestore
 protocol UserProtocol {
     /// Уникальный идентификатор
     var uid: String { get set }
-    
-    /// Флаг указывает на то, что необходимо произвести обновление данных (синхронизация с сервером)
-    var dataNeedSync: Bool { get set }
-    
+    /// Номер телефона
+    var phone: String { get set }
+    /// Имя
+    var name: String { get set }
+
     /// Провайдер авторизации
     var authProvider: AuthProviderProtocol { get set }
+
+    /// Флаг, существует ли в базе запись о пользвоателе
+    /// Используется для того, чтобы показать экран ввода первичных данных
+    var isInExternalStorage: Bool { get set }
+
+    /// Необходимость синхронизации данных
+    /// true
+    ///     - сразу после авторизации
+    ///     - после загрузки приложения
+    /// false после проведения авторизации
+    var needDownloadDataFromExternalStorage: Bool { get set }
+
+    /// Указывает на необходимость ввода первичных данных
+    /// Если false, значит на сервере нет каких-либо данных о пользователе (имени, номера телефона)
+    var needEnterPrimaryData: Bool { get set }
     
     /// Инициализатор
     init(authProvider: AuthProviderProtocol, uid: String)
     
     /// Завершение сеанса, выход из учетной записи
     func logout()
+
 }
 
 extension UserProtocol {
@@ -34,15 +51,22 @@ extension UserProtocol {
     }
 }
 
+
+// Стандартный пользователь, работа которого основана на FireBase
 class AppUser: UserProtocol {
     var authProvider: AuthProviderProtocol
     var uid: String
-    var dataNeedSync: Bool = true
+    var phone: String = ""
+    var name: String = ""
+    var needDownloadDataFromExternalStorage: Bool = true
+    var needEnterPrimaryData: Bool = true
+    var isInExternalStorage: Bool = false
     
     required init(authProvider: AuthProviderProtocol, uid: String) {
         self.authProvider = authProvider
         self.uid = uid
     }
+
 }
 
 

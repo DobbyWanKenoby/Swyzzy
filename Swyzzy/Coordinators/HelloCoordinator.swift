@@ -18,10 +18,14 @@ import Swinject
 import Firebase
 import FirebaseAuth
 
-protocol HelloCoordinatorProtocol: BasePresenter, Transmitter {}
+protocol HelloCoordinatorProtocol: BasePresenter, Transmitter {
+    init(rootCoordinator: Coordinator, resolver: Resolver)
+}
 
-final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol {
-
+final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol, Loggable {
+    var logResolver: Resolver {
+        resolver
+    }
 	private var resolver: Resolver
 
 	// объект-пользователь
@@ -38,6 +42,7 @@ final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol {
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
+        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
 //		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {

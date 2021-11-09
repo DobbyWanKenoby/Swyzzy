@@ -15,8 +15,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // Swin
     
-    var assembler = Assembler([BaseAssembly(),
-                              AuthProvideAssembly()])
+    var assembler = Assembler([
+        BaseAssembly(),
+        AuthProvideAssembly(),
+        StorageAssembly(),
+    ])
     
     var resolver: Resolver {
         assembler.resolver
