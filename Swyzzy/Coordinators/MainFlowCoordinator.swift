@@ -10,22 +10,32 @@ import Firebase
  */
 
 protocol MainFlowCoordinatorProtocol: BasePresenter, Transmitter {
-	// Swinject Resolver
-	var resolver: Resolver { get set }
+    init(rootCoordinator: Coordinator, assembler: Assembler)
 }
 
 class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
-
-	// MARK: -Input
-
-	var resolver: Resolver
-
-	// MARK: - Others
+    
+    private var assembler: Assembler
+    private var resolver: Resolver {
+        assembler.resolver
+    }
 
 	// объект-пользователь
-	private var user: UserProtocol {
-		resolver.resolve(UserProtocol.self)!
+    private var _user: UserProtocol?
+	private var user: UserProtocol? {
+        get {
+            if let user = resolver.resolve(UserProtocol.self) {
+                _user = user
+            }
+            return _user
+        }
+        set {
+            _user = newValue
+        }
 	}
+    
+    // Показывает, были ли загружены данные с сервера и на сервер
+    private var dataDidSync: Bool = false
 
 	// основной издатель приложения
 	private var appPublisher: PassthroughSubject<AppEvents, Never> {
@@ -46,31 +56,33 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 		}
 	}
 
-	init(rootCoordinator: Coordinator, resolver: Resolver) {
-		self.resolver = resolver
+    required init(rootCoordinator: Coordinator, assembler: Assembler) {
+		self.assembler = assembler
 		super.init(rootCoordinator: rootCoordinator)
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
-		createSubscribers()
-		createInitialzationCoordinator()
+        Task(priority: TaskPriority.high) {
+            createSubscribers()
+            showNextController(presentFrom: self.presenter!)
+        }
+        
 	}
 
 	// Создание подписчиков
 	private func createSubscribers() {
 		// Подписчик на событие "Пользователь залогинился"
-		appEventsSubscriber = appPublisher.sink(receiveValue: { event in
-			switch event {
-			case .userLogin (let sourceController):
-//				self.appPublisher.send(AppEvents.showEvent(onScreen: sourceController,
-//														   title: L.Base.wait.localized,
-//														   message: L.Loading.loading.localized))
-				self.showNextController(presentFrom: sourceController)
-			default:
-				return
-			}
-		})
+        appEventsSubscriber = appPublisher.sink(receiveValue: { event in
+            switch event {
+            case .userLogin (let sourceController):
+                self.dataDidSync = false
+                self.assembler.apply(assembly: UserAssembly())
+                self.showNextController(presentFrom: sourceController)
+            default:
+                return
+            }
+        })
 	}
 
 	// Отображает следующий экран
@@ -78,13 +90,17 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 
 		takeNextCoordinatorAnd { coordinator in
 			if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
-				// координатор авторизации должен анложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
+				// координатор авторизации должен наложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
 				self.presenter = authCoordinator.presenter
 				authCoordinator.startFlow()
 
 			} else if let initCoordinator = coordinator as? InitializatorCoordinator {
 				initCoordinator.startFlow {
-					self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
+                    if presentFrom is PhoneCodeController {
+                        self.route(from: presentFrom, to: initCoordinator.presenter!, method: .presentFullScreen, completion: nil)
+                    } else {
+                        self.presenter = initCoordinator.presenter!
+                    }
 				} finishCompletion:  {
 					self.showNextController(presentFrom: initCoordinator.presenter!)
 				}
@@ -103,41 +119,46 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 	}
 
 	private func takeNextCoordinatorAnd(doWork closure: @escaping (Coordinator) -> Void) {
-		guard user.isAuth else {
-			closure(getAuthCoordinator())
-			return
-		}
-
-		// если данные еще не загружены
-		guard user.dataDidUpdate else {
-			closure(getInitialCoordinator())
-			return
-		}
-
+        
+        if let user = user {
+            if user.dataNeedSync {
+                closure(getInitialCoordinator())
+            } else {
+                
+            }
+        } else {
+            if !dataDidSync {
+                dataDidSync = true
+                closure(getInitialCoordinator())
+            } else {
+                closure(getAuthCoordinator())
+            }
+        }
+    
 		// Проверяем, а есть ли данные пользователя в базе
-		guard let id = user.fb?.uid else {
-			return
-		}
-
-		let docRef = Firestore.firestore().collection("users").document("\(id)")
-		docRef.getDocument { (document, error) in
-			guard error == nil else {
-				self.sendErrorMessage(error?.localizedDescription ?? "")
-				return
-			}
-
-			guard let document = document else {
-				self.sendErrorMessage(error?.localizedDescription ?? "")
-				return
-			}
-			// Если данных нет, то грузим экран приветствия
-			if !document.exists {
-				closure(self.getHelloCoordinator())
-			// Если данные есть, то грузим основной экран
-			} else {
-				closure(self.getFunctionalCoordinator())
-			}
-		}
+//		guard let id = user.fb?.uid else {
+//			return
+//		}
+//
+//		let docRef = Firestore.firestore().collection("users").document("\(id)")
+//		docRef.getDocument { (document, error) in
+//			guard error == nil else {
+//				self.sendErrorMessage(error?.localizedDescription ?? "")
+//				return
+//			}
+//
+//			guard let document = document else {
+//				self.sendErrorMessage(error?.localizedDescription ?? "")
+//				return
+//			}
+//			// Если данных нет, то грузим экран приветствия
+//			if !document.exists {
+//				closure(self.getHelloCoordinator())
+//			// Если данные есть, то грузим основной экран
+//			} else {
+//				closure(self.getFunctionalCoordinator())
+//			}
+//		}
 	}
 
 	private func sendErrorMessage(_ text: String) {
@@ -162,7 +183,7 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol {
 		return FunctionalCoordinator(rootCoordinator: self, resolver: resolver)
 	}
 
-	fileprivate func createInitialzationCoordinator() {
+	fileprivate func createInitializationCoordinator() {
 		// Запускаем координатор Инициализации
 		let initializationCoordinator = getInitialCoordinator() as! InitializatorCoordinator
 		// С помощью следующей строки кода

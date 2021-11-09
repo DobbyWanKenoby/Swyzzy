@@ -13,28 +13,17 @@ protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {}
 
 final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 
-	// MARK: - Input
-
-	var resolver: Resolver {
-		didSet {
-			print(444444)
-		}
-	}
-
 	// MARK: - Properties
 
 	// список стран для выбора кода
 	private var countries: [Country] = []
 
-	// объект-пользователь
-	private var user: UserProtocol {
-		return resolver.resolve(UserProtocol.self)!
-	}
-
 	// основной издатель приложения
 	private var appPublisher: PassthroughSubject<AppEvents, Never> {
 		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
 	}
+    
+    private var resolver: Resolver
 
 	// MARK: - Others
 
@@ -100,43 +89,76 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 		controller.sendSMSCodeByPhone = { phone in
 			// блокируем клавишу отправки
 			controller.disableSMS()
+            
+            // Создаем провайдер авторизации по телефону
+            let authProvider = AuthProviderFactory.getPhoneAuthProvider(resolver: self.resolver)
+            authProvider.sendSMS(toPhone: phone) { result in
+                switch result {
+                // в случае успешной отправки СМС
+                case .success(_):
+                    let codeController = PhoneCodeController()
+                    codeController.phone = phone
+                    codeController.doAfterCodeDidEnter = { code in
+                        // отображаем всплывающее окно
+                        self.showLoadingAlert(onScreen: codeController, title: Localization.Base.wait.localized, message: L.AuthPhoneCodeScreen.checkCode.localized, completion: {
+                            // пытаемся авторизоваться
+                            authProvider.auth(withCode: code) { authResult in
+                                switch authResult {
+                                case .success(_):
+                                    self.disroute(controller: codeController, method: .dismiss, completion: {
+                                        let event = AppEvents.userLogin(onController: codeController)
+                                        self.appPublisher.send(event)
+                                    })
+                                case .failure(let authError):
+                                    var message: String
+                                    if case let AuthError.message(m) = authError {
+                                        message = m
+                                    } else {
+                                        message = Localization.Error.repeatAfterSomeTime.localized
+                                    }
+                                    self.showAlert(onScreen: codeController, title: Localization.Error.error.localized, message: message, repeatWork: nil)
+                                }
+                            }
+                        })
+                    }
+                    self.route(from: self.presenter!, to: codeController, method: .presentCard) {
+                        controller.enableSMS()
+                    }
+                // в случае ошибки при отправке смс
+                case .failure(let error):
+                    controller.enableSMS()
 
-			// отправляем СМС
-			self.user.authProvider.sendSMSCode(byPhone: phone) {
+                    var errorMessage = error.localizedDescription
+                    if case AuthError.message(let message) = error {
+                        errorMessage = message
+                    }
 
-				// в случае успешной отправки СМС
-				let codeController = PhoneCodeController()
-				codeController.phone = phone
-				codeController.user = self.user
-				codeController.doAfterCorrectCodeDidEnter = {
-					let event = AppEvents.userLogin(onController: codeController)
-					self.appPublisher.send(event)
-				}
-				self.route(from: self.presenter!, to: codeController, method: .presentCard) {
-					controller.enableSMS()
-				}
-
-				// в случае ошибки при отправке
-			} errorHandler: { e in
-				controller.enableSMS()
-
-				var errorMessage = ""
-				if case AuthError.message(let message) = e {
-					errorMessage = message
-				}
-
-				let errorAlert = UIAlertController(
-					title: Localization.Error.error.localized,
-					message: errorMessage,
-					preferredStyle: .alert)
-				let action = UIAlertAction(title: Localization.Base.ok.localized, style: .cancel, handler: nil)
-				errorAlert.addAction(action)
-				controller.present(errorAlert, animated: true, completion: nil)
-			}
+                    self.showAlert(onScreen: controller, title: Localization.Error.error.localized, message:errorMessage)
+                }
+                
+            }
 		}
 
 		return controller
 	}
+    
+    private func showLoadingAlert(onScreen: UIViewController, title: String, message: String, completion: (() -> Void)?) {
+        let alert = AppEvents.ShowEventType.withTitleAndText(title: title, message: message)
+        appPublisher.send(AppEvents.showEvent(onScreen: onScreen, type: alert, buttons: [], completion: completion))
+    }
+    
+    private func showAlert(onScreen: UIViewController, title: String, message: String, repeatWork: (()->Void)? = nil) {
+        let alert = AppEvents.ShowEventType.withTitleAndText(title: title, message: message)
+        var button: AppEvents.ShowEventButton
+        if repeatWork != nil {
+            button = AppEvents.ShowEventButton(title: Localization.Base.repeatit.localized, style: .cancel, handler: {
+                repeatWork?()
+            })
+        } else {
+            button = AppEvents.ShowEventButton(title: Localization.Base.ok.localized, style: .cancel)
+        }
+        appPublisher.send(AppEvents.showEvent(onScreen: onScreen, type: alert, buttons: [button]))
+    }
 
 
 }

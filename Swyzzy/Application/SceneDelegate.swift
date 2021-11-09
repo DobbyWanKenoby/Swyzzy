@@ -12,13 +12,14 @@ import Swinject
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-	lazy var resolver: Resolver = {
-		Assembler([MainAssembly()]).resolver
-	}()
-
-	var user: UserProtocol {
-		resolver.resolve(UserProtocol.self)!
+    
+    // Swin
+    
+    var assembler = Assembler([BaseAssembly(),
+                              AuthProvideAssembly()])
+    
+    var resolver: Resolver {
+        assembler.resolver
 	}
     
     /// Главный координатор сцены
@@ -34,21 +35,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         window.windowScene = windowScene
 
-		// Автоматическая деавторизация для target "SwyzzyNotAuth"
-		if ProcessInfo.processInfo.environment["auto_deauth"] == "true" {
-			user.authProvider.deauth()
-		}
-
 		// Запуск потока координатор
 		coordinator.startFlow(withWork: {
 			self.createAlertCoordinator()
 		})
-
-		// создание координатора основного потока
-		let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, resolver: resolver)
-        //let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator)
+        
+        checkUserDidAuth()
+        self.coordinator.presenter = UIViewController()
+        startFlowMainCoordinator()
+    }
+    
+    fileprivate func startFlowMainCoordinator() {
+        // создание координатора основного потока
+        let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, assembler: assembler)
         mainFlowCoordinator.startFlow()
-        window.makeKeyAndVisible()
+        window?.makeKeyAndVisible()
+    }
+    
+    // проверка, авторизован ли пользователь ранее
+    fileprivate func checkUserDidAuth() {
+        // Проверяем, авторизованилb пользователь
+        // Если авторизован
+        let baseAuthProvider = AuthProviderFactory.getBaseAuthProvider(resolver: resolver)
+        // Автоматическая деавторизация для схемы "SwyzzyLogout"
+        if ProcessInfo.processInfo.environment["auto_logout"] == "true" {
+            baseAuthProvider.logout()
+        } else {
+            let authProvider = resolver.resolve(AuthProviderProtocol.self)!
+            if authProvider.isAuth {
+                assembler.apply(assembly: UserAssembly())
+            }
+        }
     }
 
 	// создаем координатор всплывающих сообщений

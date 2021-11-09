@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  SwyzzyNotAuth
+//  SwyzzyMock
 //
-//  Created by Vasily Usov on 14.10.2021.
+//  Created by Василий Усов on 31.10.2021.
 //
 
 import UIKit

@@ -16,11 +16,10 @@ protocol InitializatorCoordinatorProtocol: BasePresenter, Transmitter {}
 final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorProtocol {
 
 	private var resolver: Resolver
-
-	// объект-пользователь
-	lazy private var user: UserProtocol = {
-		resolver.resolve(UserProtocol.self)!
-	}()
+    
+    private lazy var user: UserProtocol? = {
+        resolver.resolve(UserProtocol.self)
+    }()
 
 	var edit: ((Signal) -> Signal)?
 
@@ -29,7 +28,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 		super.init(rootCoordinator: rootCoordinator)
 		presenter = InitializationController.getInstance()
 		(presenter as! InitializationController).displayType.append(.withActivityIndicator)
-		if !user.isAuth {
+		if user == nil {
 			(presenter as! InitializationController).displayType.append(.withLogoAnimationTop)
 		}
 	}
@@ -44,7 +43,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 		initController.startInitializationWork = {
 			// TODO: Убрать фейковую паузу
 			//sleep(2)
-			self.loadDataForAuthUser()
+			self.loadDataForAuthUserIfNeed()
 			initController.stopInitialization {
 				self.finishFlow()
 			}
@@ -52,9 +51,9 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 
 	}
 
-	private func loadDataForAuthUser() {
-		if user.isAuth {
-			user.dataDidUpdate = true
+	private func loadDataForAuthUserIfNeed() {
+		if user != nil {
+            user!.dataNeedSync = false
 		}
 	}
 

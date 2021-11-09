@@ -12,11 +12,10 @@ import UIKit
 
 enum AppEvents {
 	// пользователь залогинился
-	case userLogin(onController: UIViewController)
+    case userLogin(onController: UIViewController)
 
 	// Вспылвающее уведомление
-	case showEvent(onScreen: UIViewController, type: ShowEventType, buttons: [ShowEventButton] = [])
-
+    case showEvent(onScreen: UIViewController, type: ShowEventType, buttons: [ShowEventButton] = [], completion: (()->Void)? = nil)
 
 	// MARK: Дочерние типы
 

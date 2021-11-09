@@ -5,6 +5,10 @@
 //  Created by Vasily Usov on 26.09.2021.
 //
 
+/*
+ Mock Swinject-сборок. Использует другие Mock-классы
+ */
+
 import Foundation
 import Swinject
 import Combine
@@ -21,7 +25,7 @@ class BaseAssembly: Assembly {
 class AuthProvideAssembly: Assembly {
     func assemble(container: Container) {
         container.register(AuthProviderProtocol.self) { r in
-            BaseFirebaseAuthProvider(resolver: r)
+            MockAuthProvider(resolver: r)
         }.inObjectScope(.container)
     }
 }
@@ -30,7 +34,7 @@ class UserAssembly: Assembly {
     func assemble(container: Container) {
         container.register(UserProtocol.self) { r in
             let authProvider = r.resolve(AuthProviderProtocol.self)! as AuthProviderProtocol
-            return AppUser(authProvider: authProvider, uid: authProvider.uid!)
+            return AppUserMock(authProvider: authProvider, uid: authProvider.uid!)
         }.inObjectScope(.container)
     }
 }
