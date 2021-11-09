@@ -94,6 +94,7 @@
 		E0C704F72700B8FC00E72437 /* TitanOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F552700B80D003C9C7B /* TitanOne-Regular.ttf */; };
 		E0D715B52723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */; };
 		E0D715B62723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */; };
+		E0F09346272C3D07000257FD /* SWCodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F09345272C3D07000257FD /* SWCodeField.swift */; };
 		E0FD1535271DF5950014022B /* FunctionalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */; };
 		E0FD1536271DF62E0014022B /* FunctionalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */; };
 		E0FD1539271DFAB70014022B /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1538271DFAB70014022B /* MoreController.swift */; };
@@ -172,6 +173,7 @@
 		E0B48B072725526D00F657DA /* HelloControllerContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloControllerContainer.swift; sourceTree = "<group>"; };
 		E0B48B09272556D400F657DA /* AlertCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertCoordinator.swift; sourceTree = "<group>"; };
 		E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppPublisher + AppEvents.swift"; sourceTree = "<group>"; };
+		E0F09345272C3D07000257FD /* SWCodeField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWCodeField.swift; sourceTree = "<group>"; };
 		E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalTabBarController.swift; sourceTree = "<group>"; };
 		E0FD1538271DFAB70014022B /* MoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
 		F918FF95270A451500A74FBF /* AuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
@@ -228,6 +230,7 @@
 		E04DCCEB26F8F109003B4F8E = {
 			isa = PBXGroup;
 			children = (
+				E0F09343272C3CE9000257FD /* Dependencies */,
 				E04DCCF626F8F109003B4F8E /* Swyzzy */,
 				E04DCD0D26F8F10A003B4F8E /* SwyzzyTests */,
 				E04DCD1826F8F10A003B4F8E /* SwyzzyUITests */,
@@ -422,6 +425,22 @@
 			path = Hello;
 			sourceTree = "<group>";
 		};
+		E0F09343272C3CE9000257FD /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				E0F09344272C3CF4000257FD /* SWCodeField */,
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
+		E0F09344272C3CF4000257FD /* SWCodeField */ = {
+			isa = PBXGroup;
+			children = (
+				E0F09345272C3D07000257FD /* SWCodeField.swift */,
+			);
+			path = SWCodeField;
+			sourceTree = "<group>";
+		};
 		E0FD1537271DFA730014022B /* Functional */ = {
 			isa = PBXGroup;
 			children = (
@@ -560,7 +579,6 @@
 				E0B42F522700B681003C9C7B /* XCRemoteSwiftPackageReference "Swinject" */,
 				E06AB69E270238CB008D1BEA /* XCRemoteSwiftPackageReference "SnapKit" */,
 				E07A0A56270E18AA00C9828A /* XCRemoteSwiftPackageReference "SwiftCoordinatorsKit" */,
-				E0DBFF992714CAAE00C7CC71 /* XCRemoteSwiftPackageReference "SWCodeField" */,
 			);
 			productRefGroup = E04DCCF526F8F109003B4F8E /* Products */;
 			projectDirPath = "";
@@ -627,6 +645,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E008C4D22700BCE50093B5FD /* SwinjectAssemblies.swift in Sources */,
+				E0F09346272C3D07000257FD /* SWCodeField.swift in Sources */,
 				E06AB6A827024711008D1BEA /* SWButton.swift in Sources */,
 				E0B48B0A272556D400F657DA /* AlertCoordinator.swift in Sources */,
 				E082899C2712FD060060E4A8 /* SWCodeField.swift in Sources */,
@@ -1162,14 +1181,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		E0DBFF992714CAAE00C7CC71 /* XCRemoteSwiftPackageReference "SWCodeField" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/DobbyWanKenoby/SWCodeField";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
