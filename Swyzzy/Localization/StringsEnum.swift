@@ -34,6 +34,8 @@ enum Localization {
         case cancel
 		case wait
 		case repeatit
+        case next
+        case save
     }
     
     // Ошибка
@@ -62,6 +64,20 @@ enum Localization {
         case title
         case subtitle
         case checkCode
+    }
+    
+    // Экран обучения и ввода первичных данных
+    enum HelloScreen: String, LocalizationEnumProtocol {
+        case welcomeTitle
+        case welcomeText
+        case addGiftTitle
+        case addGiftText
+        case lookFeedTitle
+        case lookFeedText
+        case nameTitle
+        case nameText
+        case namePlaceholder
+        case youMustEnterName
     }
 }
 

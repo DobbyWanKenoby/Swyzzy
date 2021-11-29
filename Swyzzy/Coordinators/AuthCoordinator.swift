@@ -24,6 +24,7 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
 	private var appPublisher: PassthroughSubject<AppEvents, Never> {
 		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
 	}
+
     var logResolver: Resolver {
         resolver
     }

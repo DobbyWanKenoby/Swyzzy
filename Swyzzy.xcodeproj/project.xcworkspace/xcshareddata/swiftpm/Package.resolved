@@ -119,6 +119,15 @@
         }
       },
       {
+        "package": "SwiftCoordinatorsKit",
+        "repositoryURL": "https://github.com/DobbyWanKenoby/SwiftCoordinatorsKit",
+        "state": {
+          "branch": null,
+          "revision": "c15cfae6610141d99c0431c92eef3a1ac933f249",
+          "version": "1.0.9"
+        }
+      },
+      {
         "package": "Swinject",
         "repositoryURL": "https://github.com/Swinject/Swinject",
         "state": {

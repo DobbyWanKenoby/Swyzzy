@@ -9,7 +9,7 @@ import Foundation
 import Swinject
 import Firebase
 
-protocol StorageProviderProtocol {
+protocol StorageProvider {
     init(resolver: Resolver)
 
     // Синхронизация данных пользователя
@@ -17,7 +17,7 @@ protocol StorageProviderProtocol {
     func downloadAndUpdateUserData(completion: ((Error?) -> Void)?)
 }
 
-class FirebaseStorageProvider: StorageProviderProtocol, Loggable {
+class FirebaseStorageProvider: StorageProvider, Loggable {
     var logResolver: Resolver {
         resolver
     }

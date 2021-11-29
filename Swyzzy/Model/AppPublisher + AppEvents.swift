@@ -1,20 +1,12 @@
-//
-//  ReactiveEventsTube.swift
-//  Swyzzy
-//
-//  Created by Vasily Usov on 23.10.2021.
-//
-
 import UIKit
 
-
-// AppPublisher - основной Издатель (Combine) приложения, передающий информацию о различных событиях внутри приложения
+// AppPublisher - основной Издатель (Combine) приложения, передающий информацию о различных событиях внутри приложения. 
 
 enum AppEvents {
 	// пользователь залогинился
     case userLogin(onController: UIViewController)
 
-	// Вспылвающее уведомление
+	// Всплывающее уведомление
     case showEvent(onScreen: UIViewController, type: ShowEventType, buttons: [ShowEventButton] = [], completion: (()->Void)? = nil)
 
 	// MARK: Дочерние типы

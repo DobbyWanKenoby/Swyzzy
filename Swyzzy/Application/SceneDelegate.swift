@@ -13,13 +13,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
     
-    // Swin
-    
     var assembler = Assembler([
+        UserAssembly(),
         BaseAssembly(),
-        AuthProvideAssembly(),
+        AuthAssembly(),
         StorageAssembly(),
     ])
+
+    @Injected() private var user: User!
     
     var resolver: Resolver {
         assembler.resolver
@@ -57,7 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // проверка, авторизован ли пользователь ранее
     fileprivate func checkUserDidAuth() {
-        // Проверяем, авторизованилb пользователь
+        // Проверяем, авторизован ли пользователь
         // Если авторизован
         let baseAuthProvider = AuthProviderFactory.getBaseAuthProvider(resolver: resolver)
         // Автоматическая деавторизация для схемы "SwyzzyLogout"

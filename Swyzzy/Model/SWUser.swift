@@ -10,6 +10,33 @@
 import Foundation
 import FirebaseAuth
 import FirebaseFirestore
+import Swinject
+
+protocol User {
+    var isAuth: Bool { get }
+    func logout()
+}
+
+class FirebaseBasedUser: User, Injectable {
+    private let resolver: Resolver
+
+    init(resolver: Resolver) {
+        self.resolver = resolver
+    }
+
+    var isAuth: Bool {
+        guard let user = Auth.auth().currentUser else {
+            return false
+        }
+        return !user.isAnonymous
+    }
+
+    func logout() {
+        try? Auth.auth().signOut()
+    }
+}
+
+
 
 protocol UserProtocol {
     /// Уникальный идентификатор
@@ -39,7 +66,10 @@ protocol UserProtocol {
     
     /// Инициализатор
     init(authProvider: AuthProviderProtocol, uid: String)
-    
+
+    /// Синхронизация данных с внешним хранилищем
+    func sync()
+
     /// Завершение сеанса, выход из учетной записи
     func logout()
 
@@ -61,10 +91,14 @@ class AppUser: UserProtocol {
     var needDownloadDataFromExternalStorage: Bool = true
     var needEnterPrimaryData: Bool = true
     var isInExternalStorage: Bool = false
-    
+
     required init(authProvider: AuthProviderProtocol, uid: String) {
         self.authProvider = authProvider
         self.uid = uid
+    }
+
+    func sync() {
+        
     }
 
 }

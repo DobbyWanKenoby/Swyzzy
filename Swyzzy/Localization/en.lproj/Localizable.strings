@@ -12,6 +12,8 @@
 "Base_cancel" = "Cancel";
 "Base_wait" = "Please wait";
 "Base_repeatit" = "Repeat";
+"Base_next" = "Next";
+"Base_save" = "Save";
 
 // Ошибка
 "Error_error" = "Error";
@@ -32,3 +34,21 @@
 "AuthPhoneCodeScreen_title" = "Confirmation code";
 "AuthPhoneCodeScreen_subtitle" = "Enter the code, which sent to phone";
 "AuthPhoneCodeScreen_checkCode" = "We verificating the entered code";
+
+// Экран обучения и ввода первичных данных
+"HelloScreen_welcomeTitle" = "Welcome to Swyzzy!";
+"HelloScreen_welcomeText" = "With Swyzzy, you always know what your friend dreams about, and you yourself can post the gifts you want to receive. It's that simple!";
+"HelloScreen_addGiftTitle" = "Add a Gift";
+"HelloScreen_addGiftText" = "Add the gift you want to receive to your wishlist and share it with your friends.";
+"HelloScreen_lookFeedTitle" = "Find out what your friends want";
+"HelloScreen_lookFeedText" = "View the feed of your friends' wishes and you will always know what they are dreaming of!";
+"HelloScreen_nameTitle" = "Let's get acquainted!";
+"HelloScreen_nameText" = "Enter your first and last name";
+"HelloScreen_namePlaceholder" = "Luke Skywalker";
+"HelloScreen_youMustEnterName" = "You need to enter a name";
+
+
+"" = "";
+"" = "";
+
+

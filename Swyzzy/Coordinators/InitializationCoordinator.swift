@@ -54,7 +54,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 
         controller.startInitializationWork = {
 			// TODO: Убрать фейковую паузу
-			sleep(2)
+			//sleep(2)
 
             // Если пользователь авторизован
             if self.user != nil {
@@ -73,7 +73,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
             return
         }
         if user.needDownloadDataFromExternalStorage {
-            let storageProvider = resolver.resolve(StorageProviderProtocol.self)!
+            let storageProvider = resolver.resolve(StorageProvider.self)!
             storageProvider.downloadAndUpdateUserData(completion: { error in
 
                 // Если пришла ошибка

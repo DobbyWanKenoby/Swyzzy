@@ -66,7 +66,7 @@ protocol PhoneAuthProviderProtocol: BaseFirebaseAuthProvider {
 
 class PhoneAuthProvider: BaseFirebaseAuthProvider, PhoneAuthProviderProtocol {
     
-    private var firebaseUser: User? {
+    private var firebaseUser: Firebase.User? {
         Auth.auth().currentUser
     }
     

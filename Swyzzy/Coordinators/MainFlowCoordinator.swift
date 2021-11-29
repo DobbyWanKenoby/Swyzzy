@@ -90,7 +90,7 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol, Loggable 
 
         self.takeNextCoordinatorWithWork { coordinator in
             if let authCoordinator = coordinator as? AuthCoordinatorProtocol {
-                // координатор авторизации должен наложиться сверху, чтобы предыдущая "слиться" с предыдущей анимацией
+                // координатор авторизации должен наложиться сверху, чтобы "слиться" с предыдущей анимацией
                 self.presenter = authCoordinator.presenter
                 authCoordinator.startFlow()
 
@@ -112,7 +112,18 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol, Loggable 
                     self.logger.log(.routeViewController, description: "From \(presentFrom) to \((coordinator as! Presenter).presenter!)")
                     self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
                 } finishCompletion: {}
-
+                
+            } else if let helloCoordinator = coordinator as? HelloCoordinatorProtocol {
+                helloCoordinator.startFlow {
+                    self.logger.log(.routeViewController, description: "From \(presentFrom) to \((coordinator as! Presenter).presenter!)")
+                    self.route(from: presentFrom, to: (coordinator as! Presenter).presenter!, method: .presentFullScreen, completion: nil)
+                } finishCompletion: {
+                    return
+                }
+            
+            // Во всех остальных случаях
+            // ВАЖНО: Будет вызван startFlow не конкретного координатора, а расширения протокола (диспетчеризация работает)
+            // Если трубуется вызывать startFlow именно координатора, то необходтимо добавить блок else if let
             } else {
                 coordinator.startFlow {
                     self.logger.log(.routeViewController, description: "From \(presentFrom) to \((coordinator as! Presenter).presenter!)")
@@ -130,10 +141,9 @@ class MainFlowCoordinator: BasePresenter, MainFlowCoordinatorProtocol, Loggable 
             } else if !user.needDownloadDataFromExternalStorage && user.needEnterPrimaryData {
                 closure(getHelloCoordinator())
             } else if !user.needDownloadDataFromExternalStorage && !user.needEnterPrimaryData {
-                print(7777)
-                // functional coordinator
+                // TODO: functional coordinator
             } else {
-                print("Этот блок не должен быть запущен =)")
+                fatalError("Этот блок не должен быть запущен")
             }
         } else {
             if !dataDidSync {

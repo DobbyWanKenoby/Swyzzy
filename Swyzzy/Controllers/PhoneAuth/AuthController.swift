@@ -100,8 +100,8 @@ class AuthController: UIViewController, AuthControllerProtocol {
         let button = SWButton(frame: CGRect.zero)
         button.setTitle(Localization.AuthScreen.sendCodeButton.localized, for: .normal)
         
-        let handler: UIButton.ConfigurationUpdateHandler = { button in // 1
-            switch button.state { // 2
+        let handler: UIButton.ConfigurationUpdateHandler = { button in
+            switch button.state {
             case .disabled:
                 button.configuration?.title = ""
                 button.configuration?.showsActivityIndicator = true

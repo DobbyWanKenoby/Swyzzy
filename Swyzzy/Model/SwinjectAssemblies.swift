@@ -25,7 +25,7 @@ class BaseAssembly: Assembly {
     }
 }
 
-class AuthProvideAssembly: Assembly {
+class AuthAssembly: Assembly {
     func assemble(container: Container) {
         container.register(AuthProviderProtocol.self) { r in
             BaseFirebaseAuthProvider(resolver: r)
@@ -44,7 +44,7 @@ class UserAssembly: Assembly {
 
 class StorageAssembly: Assembly {
     func assemble(container: Container) {
-        container.register(StorageProviderProtocol.self) { r in
+        container.register(StorageProvider.self) { r in
             FirebaseStorageProvider(resolver: r)
         }.inObjectScope(.container)
     }

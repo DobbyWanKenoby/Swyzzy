@@ -1,12 +1,5 @@
-//
-//  HelloControllerContainer.swift
-//  Swyzzy
-//
-//  Created by Vasily Usov on 24.10.2021.
-//
-
-import Foundation
 import UIKit
+import SnapKit
 
 protocol HelloControllerContainerProtocol: UIViewController {
 	/// Процесс приветствия завершен
@@ -19,7 +12,10 @@ final class HelloControllerContainer: UIViewController, HelloControllerContainer
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.backgroundColor = .red
+        initSetup()
 	}
-	
+    
+    private func initSetup() {
+        view.backgroundColor = .white
+    }
 }
