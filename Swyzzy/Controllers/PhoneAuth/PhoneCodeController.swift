@@ -23,7 +23,6 @@ class PhoneCodeController: UIViewController, PhoneCodeControllerProtocol {
     // MARK: Properties
 
     var phone: String!
-    var user: UserProtocol!
     
     // MARK: Callbacks
     

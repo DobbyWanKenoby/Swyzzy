@@ -14,21 +14,18 @@ protocol HelloCoordinatorProtocol: BasePresenter, Transmitter {
     init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol, Loggable {
+final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol {
 
     // основной издатель приложения
     private var appPublisher: PassthroughSubject<AppEvents, Never> {
         resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
     }
 
-    var logResolver: Resolver {
-        resolver
-    }
 	private var resolver: Resolver
 
 	// объект-пользователь
-	private var user: UserProtocol {
-		resolver.resolve(UserProtocol.self)!
+	private var user: User {
+		resolver.resolve(User.self)!
 	}
     
     private var currentChildViewController: UIViewController? = nil {
@@ -79,9 +76,9 @@ final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol, Loggable 
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
-        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
+        //logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
-        show(screen: .name)
+        show(screen: .addGift)
         
 //		(self.presenter as? InitializationControllerProtocol)?.initializationDidEnd = {
 //			// действия на контроллере, которые будут выполнены в конце инициализации
@@ -111,18 +108,18 @@ final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol, Loggable 
                                  textFieldText: "",
                                  textFieldPlaceholder: L.HelloScreen.namePlaceholder.localized)
         controller.actionOnPressButton = {
-            guard let name = controller.textField.text, name != "" else {
-                let button = AppEvents.ShowEventButton(title: L.Base.ok.localized, style: .cancel) {
-                    controller.textField.becomeFirstResponder()
-                }
-                let alert = AppEvents.ShowEventType.withTitleAndText(title: L.Base.attention.localized, message: L.HelloScreen.youMustEnterName.localized)
-                self.appPublisher.send(AppEvents.showEvent(onScreen: controller, type: alert, buttons: [button]))
-                return
-            }
+//            guard let name = controller.textField.text, name != "" else {
+//                let button = AppEvents.ShowEventButton(title: L.Base.ok.localized, style: .cancel) {
+//                    controller.textField.becomeFirstResponder()
+//                }
+//                let alert = AppEvents.ShowEventType.withTitleAndText(title: L.Base.attention.localized, message: L.HelloScreen.youMustEnterName.localized)
+//                self.appPublisher.send(AppEvents.showEvent(onScreen: controller, type: alert, buttons: [button]))
+//                return
+//            }
+//
+//            controller.button.isEnabled = false
 
-            controller.button.isEnabled = false
-
-            //self.show(screen: .addGift)
+            self.show(screen: .addGift)
         }
         return controller
     }
@@ -134,7 +131,7 @@ final class HelloCoordinator: BasePresenter, HelloCoordinatorProtocol, Loggable 
                                  text: L.HelloScreen.welcomeText.localized,
                                  buttonText: L.Base.next.localized)
         controller.actionOnPressButton = {
-            self.show(screen: .addGift)
+            self.show(screen: .name)
         }
         return controller
     }

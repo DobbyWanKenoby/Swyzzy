@@ -5,13 +5,13 @@ protocol Injectable {
 }
 
 @propertyWrapper final class Injected<Resolve, Service>: Resolvable {
-    var wrappedValue: Service!
+    var wrappedValue: Service?
 
     init(as _: Resolve.Type) {}
 
     func resolve(_ resolver: Resolver) {
         if wrappedValue == nil {
-            wrappedValue = (resolver.resolve(Resolve.self) as! Service)
+            wrappedValue = (resolver.resolve(Resolve.self) as? Service)
         }
     }
 }

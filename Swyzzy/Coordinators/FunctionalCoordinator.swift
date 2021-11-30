@@ -12,18 +12,15 @@ protocol FunctionalCoordinatorProtocol: BasePresenter, Transmitter {
     init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol, Loggable {
+final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol {
 
 	// MARK: - Properties
 
-    var logResolver: Resolver {
-        resolver
-    }
 	private var resolver: Resolver!
 
 	// объект-пользователь
-	lazy var user: UserProtocol = {
-		resolver.resolve(UserProtocol.self)!
+	lazy var user: User = {
+		resolver.resolve(User.self)!
 	}()
 
 	// основной издатель приложения
@@ -46,7 +43,7 @@ final class FunctionalCoordinator: BasePresenter, FunctionalCoordinatorProtocol,
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
-        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
+        //logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 	}
 

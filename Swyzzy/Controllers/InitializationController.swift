@@ -65,10 +65,17 @@ class InitializationController: UIViewController, InitializationControllerProtoc
 		if displayType.contains(.withActivityIndicator) {
 			loadingIndicator.startAnimating()
 		}
+        self.view.layer.opacity = 0
+
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		startInitializationWork?()
+        UIView.animate(withDuration: 0.4) {
+            self.view.layer.opacity = 1
+        } completion: { _ in
+            self.startInitializationWork?()
+        }
+
 	}
 
 	func stopInitialization(withWork work: (()->Void)?) {

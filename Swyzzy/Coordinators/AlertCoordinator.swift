@@ -20,7 +20,7 @@ protocol AlertCoordinatorProtocol: BaseCoordinator {
     init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol, Loggable {
+final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol {
     var logResolver: Resolver {
         resolver
     }
@@ -31,14 +31,7 @@ final class AlertCoordinator: BaseCoordinator, AlertCoordinatorProtocol, Loggabl
 		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
 	}
 
-	// объект-пользователь
-	private var user: UserProtocol {
-		resolver.resolve(UserProtocol.self)!
-	}
-
 	var appEventsSubscriber: AnyCancellable!
-
-	var edit: ((Signal) -> Signal)?
 
 	init(rootCoordinator: Coordinator, resolver: Resolver) {
 		self.resolver = resolver

@@ -13,7 +13,7 @@ protocol AuthCoordinatorProtocol: BasePresenter, Transmitter {
     init(rootCoordinator: Coordinator, resolver: Resolver)
 }
 
-final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
+final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol {
 
 	// MARK: - Properties
 
@@ -25,9 +25,6 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
 		resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
 	}
 
-    var logResolver: Resolver {
-        resolver
-    }
     private var resolver: Resolver
 
 	// MARK: - Others
@@ -52,7 +49,7 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
-        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
+        log(.console, message: "Coordinator start own flow", source: self)
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
 		loadingData()
@@ -111,10 +108,12 @@ final class AuthCoordinator: BasePresenter, AuthCoordinatorProtocol, Loggable {
                             authProvider.auth(withCode: code) { authResult in
                                 switch authResult {
                                 case .success(_):
-                                    self.disroute(controller: codeController, method: .dismiss, completion: {
-                                        let event = AppEvents.userLogin(onController: codeController)
-                                        self.appPublisher.send(event)
-                                    })
+                                    codeController.dismiss(animated: true) {
+                                        codeController.dismiss(animated: true) {
+                                            let event = AppEvents.userLogin
+                                            self.appPublisher.send(event)
+                                        }
+                                    }
                                 case .failure(let authError):
                                     var message: String
                                     if case let AuthError.message(m) = authError {

@@ -4,7 +4,7 @@ import UIKit
 
 enum AppEvents {
 	// пользователь залогинился
-    case userLogin(onController: UIViewController)
+    case userLogin
 
 	// Всплывающее уведомление
     case showEvent(onScreen: UIViewController, type: ShowEventType, buttons: [ShowEventButton] = [], completion: (()->Void)? = nil)

@@ -19,8 +19,13 @@ class BaseAssembly: Assembly {
         // Логгер
         container.register(Logger.self) { r in
             let l = Logger(type: .console, resolver: r)
-            l.prefix = "[Swyzzy App]".localized()
+            l.prefix = ""
             return l
+        }.inObjectScope(.container)
+
+        // Менеджер настрое
+        container.register(SettingsManager.self) { _ in
+            UserDefaultsSettingsManager()
         }.inObjectScope(.container)
     }
 }
@@ -33,19 +38,44 @@ class AuthAssembly: Assembly {
     }
 }
 
-class UserAssembly: Assembly {
+class UserBuilderAssembly: Assembly {
+
     func assemble(container: Container) {
-        container.register(UserProtocol.self) { r in
-            let authProvider = r.resolve(AuthProviderProtocol.self)! as AuthProviderProtocol
-            return AppUser(authProvider: authProvider, uid: authProvider.uid!)
-        }.inObjectScope(.container)
+        container.register(UserBuilder.self) { r in
+            FirebaseUserBuilder(resolver: r)
+        }
     }
 }
 
-class StorageAssembly: Assembly {
+class AuthUserAssembly: Assembly {
+
+    private var instance: User
+
+    init(_ user: User) {
+        self.instance = user
+    }
+
     func assemble(container: Container) {
-        container.register(StorageProvider.self) { r in
-            FirebaseStorageProvider(resolver: r)
+        container.register(User.self) { r in
+            return self.instance
         }.inObjectScope(.container)
     }
+
 }
+//
+//
+////    func assemble(container: Container) {
+////        container.register(UserProtocol.self) { r in
+////            let authProvider = r.resolve(AuthProviderProtocol.self)! as AuthProviderProtocol
+////            return AppUser(authProvider: authProvider, uid: authProvider.uid!)
+////        }.inObjectScope(.container)
+////    }
+//}
+
+//class StorageAssembly: Assembly {
+//    func assemble(container: Container) {
+//        container.register(StorageProvider.self) { r in
+//            FirebaseStorageProvider(resolver: r)
+//        }.inObjectScope(.container)
+//    }
+//}

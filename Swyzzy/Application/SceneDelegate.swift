@@ -8,23 +8,40 @@
 import UIKit
 import SwiftCoordinatorsKit
 import Swinject
+import Combine
+import FirebaseAuth
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, Injectable {
 
     var window: UIWindow?
     
-    var assembler = Assembler([
-        UserAssembly(),
+    private var assembler = Assembler([
         BaseAssembly(),
+        UserBuilderAssembly(),
         AuthAssembly(),
-        StorageAssembly(),
     ])
 
-    @Injected() private var user: User!
-    
-    var resolver: Resolver {
+    private var resolver: Resolver {
         assembler.resolver
-	}
+    }
+
+    private var mainFlowCoordinator: MainFlowCoordinatorProtocol!
+
+    @Injected() private var userBuilder: UserBuilder!
+
+    // основной издатель приложения
+    private var appPublisher: PassthroughSubject<AppEvents, Never> {
+        resolver.resolve(PassthroughSubject<AppEvents, Never>.self, name: "AppPublisher")!
+    }
+
+    // подписчик на события основного издателя приложения
+    private var appEventsSubscriber: AnyCancellable!
+
+    override init() {
+        super.init()
+        injectServices(resolver)
+        createSubscribers()
+    }
     
     /// Главный координатор сцены
     lazy var coordinator: SceneCoordinator = {
@@ -43,69 +60,61 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		coordinator.startFlow(withWork: {
 			self.createAlertCoordinator()
 		})
+
+        try? Auth.auth().signOut()
         
-        checkUserDidAuth()
-        self.coordinator.presenter = UIViewController()
-        startFlowMainCoordinator()
-    }
-    
-    fileprivate func startFlowMainCoordinator() {
-        // создание координатора основного потока
-        let mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, assembler: assembler)
-        mainFlowCoordinator.startFlow()
-        window?.makeKeyAndVisible()
-    }
-    
-    // проверка, авторизован ли пользователь ранее
-    fileprivate func checkUserDidAuth() {
-        // Проверяем, авторизован ли пользователь
-        // Если авторизован
-        let baseAuthProvider = AuthProviderFactory.getBaseAuthProvider(resolver: resolver)
-        // Автоматическая деавторизация для схемы "SwyzzyLogout"
         if ProcessInfo.processInfo.environment["auto_logout"] == "true" {
-            baseAuthProvider.logout()
-        } else {
-            let authProvider = resolver.resolve(AuthProviderProtocol.self)!
-            if authProvider.isAuth {
-                assembler.apply(assembly: UserAssembly())
+            try? Auth.auth().signOut()
+        }
+        coordinator.presenter = SplashViewController.getInstance()
+        mainFlowCoordinator = MainFlowCoordinator(rootCoordinator: coordinator, resolver: resolver)
+        showNextController(window)
+        window.makeKeyAndVisible()
+    }
+
+    private func showNextController(_ window: UIWindow) {
+        userBuilder.createUserIfCan { [self] result in
+            switch result {
+            case .success(let user):
+                assembler.apply(assembly: AuthUserAssembly(user))
+            case .failure(let error):
+                log(.console, message: error.localizedDescription, source: self)
             }
+            mainFlowCoordinator.startFlow()
         }
     }
+
+    // Создание подписчиков
+    private func createSubscribers() {
+        // Подписчик на событие "Пользователь залогинился"
+        appEventsSubscriber = appPublisher.sink(receiveValue: { event in
+            log(.console, message: "Receive publish event", source: self)
+            switch event {
+            case .userLogin:
+                log(.console, message: "User did login", source: self)
+                self.showNextController(self.window!)
+//                self.userBuilder.createUserIfCan { result in
+//                    switch result {
+//                    case .success(let user):
+//                        self.assembler.apply(assembly: AuthUserAssembly(user))
+//                        self.mainFlowCoordinator.startFlow()
+//                    case .failure(let error):
+//                        log(.console, message: error.localizedDescription, source: self)
+//                    }
+//                }
+            default:
+                log(.console, message: "Receive unknown publish event", source: self)
+                return
+            }
+        })
+    }
+
+    
 
 	// создаем координатор всплывающих сообщений
 	fileprivate func createAlertCoordinator() {
 		let alertCoordinator = AlertCoordinator(rootCoordinator: coordinator, resolver: resolver)
 		alertCoordinator.startFlow(withWork: nil, finishCompletion: nil)
 	}
-
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-    }
-
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
-
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
-
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
-
-
 }
 

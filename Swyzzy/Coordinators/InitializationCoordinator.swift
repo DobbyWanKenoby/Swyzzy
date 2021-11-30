@@ -14,16 +14,16 @@ import Combine
 
 protocol InitializatorCoordinatorProtocol: BasePresenter, Transmitter {}
 
-final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorProtocol, Loggable {
+final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorProtocol, Injectable {
 
-    var logResolver: Resolver {
-        resolver
-    }
 	private var resolver: Resolver
+
+    @Injected() private var user: User!
     
-    private lazy var user: UserProtocol? = {
-        resolver.resolve(UserProtocol.self)
-    }()
+//    private lazy var user: User? = {
+//        resolver.resolve(User.self)
+//    }()
+
 
     // Хелпер для доступа к презентеру
     // Сразу возвращает значение требуемого типа
@@ -41,6 +41,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 	init(rootCoordinator: Coordinator, resolver: Resolver) {
 		self.resolver = resolver
 		super.init(rootCoordinator: rootCoordinator)
+        injectServices(resolver)
 		presenter = InitializationController.getInstance()
 		(presenter as! InitializationController).displayType.append(.withActivityIndicator)
 		if user == nil {
@@ -49,17 +50,17 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 	}
 
 	override func startFlow(withWork work: (() -> Void)? = nil, finishCompletion: (() -> Void)? = nil) {
-        logger.log(.coordinatorStartedFlow, description: String(describing: Self.Type.self))
+        log(.console, message: "Coordinator start own flow", source: self)
 		super.startFlow(withWork: work, finishCompletion: finishCompletion)
 
         controller.startInitializationWork = {
 			// TODO: Убрать фейковую паузу
-			//sleep(2)
+			sleep(2)
 
             // Если пользователь авторизован
             if self.user != nil {
                 self.loadDataForAuthUser()
-
+                self.finish()
             // Если не авторизован
             } else {
                 self.finish()
@@ -68,26 +69,7 @@ final class InitializatorCoordinator: BasePresenter, InitializatorCoordinatorPro
 	}
 
 	private func loadDataForAuthUser() {
-        guard let user = user else {
-            finish()
-            return
-        }
-        if user.needDownloadDataFromExternalStorage {
-            let storageProvider = resolver.resolve(StorageProvider.self)!
-            storageProvider.downloadAndUpdateUserData(completion: { error in
-
-                // Если пришла ошибка
-                if let error = error {
-                    self.sendErrorMessage(error.localizedDescription) {
-                        self.loadDataForAuthUser()
-                    }
-                } else {
-                    self.finish()
-                }
-            })
-        } else {
-            finish()
-        }
+        user.needDownloadDataFromExternalStorage = false
 	}
 
     private func sendErrorMessage(_ text: String, closure: (()->Void)?) {

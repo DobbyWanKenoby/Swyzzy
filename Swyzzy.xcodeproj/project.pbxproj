@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		E008C4D22700BCE50093B5FD /* SwinjectAssemblies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E008C4D12700BCE50093B5FD /* SwinjectAssemblies.swift */; };
-		E0128BEB273A80C200B5283C /* SWStorageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0128BEA273A80C200B5283C /* SWStorageProvider.swift */; };
 		E0128BED273A857200B5283C /* StorageError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0128BEC273A857200B5283C /* StorageError.swift */; };
 		E0128BEF273A94E900B5283C /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0128BEE273A94E900B5283C /* Logger.swift */; };
 		E0128BF2273A96F800B5283C /* Loggable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0128BF1273A96F800B5283C /* Loggable.swift */; };
@@ -44,9 +43,13 @@
 		E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06AB6B92704F3D5008D1BEA /* CountriesController.swift */; };
 		E06E67B52718BAFA00CB1995 /* AuthError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E06E67B42718BAFA00CB1995 /* AuthError.swift */; };
 		E07022672755620000E86A8B /* InjectedPropertyWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07022662755620000E86A8B /* InjectedPropertyWrapper.swift */; };
+		E082652927556AA7004B0812 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E082652827556AA7004B0812 /* SettingsManager.swift */; };
+		E082652C27568786004B0812 /* UserBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E082652B27568786004B0812 /* UserBuilder.swift */; };
+		E082652E27568C75004B0812 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E082652D27568C75004B0812 /* User.swift */; };
+		E082653027568F4C004B0812 /* UserError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E082652F27568F4C004B0812 /* UserError.swift */; };
+		E08265332756A5B2004B0812 /* SplashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08265322756A5B2004B0812 /* SplashController.swift */; };
 		E082899A2712EC190060E4A8 /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E08289992712EC190060E4A8 /* AuthCoordinator.swift */; };
 		E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */; };
-		E0B42F482700B323003C9C7B /* SWUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F472700B323003C9C7B /* SWUser.swift */; };
 		E0B42F4A2700B3D9003C9C7B /* CountriesPhones.plist in Resources */ = {isa = PBXBuildFile; fileRef = E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */; };
 		E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0B42F4D2700B42B003C9C7B /* FunctionalCoordinator.swift */; };
 		E0B42F542700B681003C9C7B /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = E0B42F532700B681003C9C7B /* Swinject */; };
@@ -59,9 +62,8 @@
 		E0F09346272C3D07000257FD /* SWCodeField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0F09345272C3D07000257FD /* SWCodeField.swift */; };
 		E0FD1535271DF5950014022B /* FunctionalTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */; };
 		E0FD1539271DFAB70014022B /* MoreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0FD1538271DFAB70014022B /* MoreController.swift */; };
-		F918FF96270A451500A74FBF /* AuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F918FF95270A451500A74FBF /* AuthProvider.swift */; };
 		F9A14CF4274D21A7007E7180 /* HelloTextFieldController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A14CF3274D21A7007E7180 /* HelloTextFieldController.swift */; };
-		F9BE458B272C826C009BEA32 /* SWUserAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BE458A272C826B009BEA32 /* SWUserAuthProvider.swift */; };
+		F9BE458B272C826C009BEA32 /* UserAuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BE458A272C826B009BEA32 /* UserAuthProvider.swift */; };
 		F9BE458E272D530F009BEA32 /* Extension Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9BE458D272D530F009BEA32 /* Extension Coordinator.swift */; };
 		F9BE4591272DDACE009BEA32 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = F9BE4590272DDACE009BEA32 /* README.md */; };
 		F9C10470274303F500451B88 /* SwiftCoordinatorsKit in Frameworks */ = {isa = PBXBuildFile; productRef = F9C1046F274303F500451B88 /* SwiftCoordinatorsKit */; };
@@ -86,7 +88,6 @@
 
 /* Begin PBXFileReference section */
 		E008C4D12700BCE50093B5FD /* SwinjectAssemblies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwinjectAssemblies.swift; sourceTree = "<group>"; };
-		E0128BEA273A80C200B5283C /* SWStorageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWStorageProvider.swift; sourceTree = "<group>"; };
 		E0128BEC273A857200B5283C /* StorageError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageError.swift; sourceTree = "<group>"; };
 		E0128BEE273A94E900B5283C /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		E0128BF1273A96F800B5283C /* Loggable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loggable.swift; sourceTree = "<group>"; };
@@ -123,9 +124,13 @@
 		E06AB6B92704F3D5008D1BEA /* CountriesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountriesController.swift; sourceTree = "<group>"; };
 		E06E67B42718BAFA00CB1995 /* AuthError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthError.swift; sourceTree = "<group>"; };
 		E07022662755620000E86A8B /* InjectedPropertyWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedPropertyWrapper.swift; sourceTree = "<group>"; };
+		E082652827556AA7004B0812 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
+		E082652B27568786004B0812 /* UserBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBuilder.swift; sourceTree = "<group>"; };
+		E082652D27568C75004B0812 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		E082652F27568F4C004B0812 /* UserError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserError.swift; sourceTree = "<group>"; };
+		E08265322756A5B2004B0812 /* SplashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashController.swift; sourceTree = "<group>"; };
 		E08289992712EC190060E4A8 /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F442700B2B2003C9C7B /* InternationalizationCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternationalizationCoordinator.swift; sourceTree = "<group>"; };
-		E0B42F472700B323003C9C7B /* SWUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SWUser.swift; sourceTree = "<group>"; };
 		E0B42F492700B3D9003C9C7B /* CountriesPhones.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CountriesPhones.plist; sourceTree = "<group>"; };
 		E0B42F4D2700B42B003C9C7B /* FunctionalCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalCoordinator.swift; sourceTree = "<group>"; };
 		E0B42F552700B80D003C9C7B /* TitanOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "TitanOne-Regular.ttf"; sourceTree = "<group>"; };
@@ -138,9 +143,8 @@
 		E0FD1534271DF5950014022B /* FunctionalTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalTabBarController.swift; sourceTree = "<group>"; };
 		E0FD1538271DFAB70014022B /* MoreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreController.swift; sourceTree = "<group>"; };
 		F9021B40272F368D0077CA7C /* AppDelegateMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegateMock.swift; sourceTree = "<group>"; };
-		F918FF95270A451500A74FBF /* AuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
 		F9A14CF3274D21A7007E7180 /* HelloTextFieldController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelloTextFieldController.swift; sourceTree = "<group>"; };
-		F9BE458A272C826B009BEA32 /* SWUserAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SWUserAuthProvider.swift; sourceTree = "<group>"; };
+		F9BE458A272C826B009BEA32 /* UserAuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuthProvider.swift; sourceTree = "<group>"; };
 		F9BE458D272D530F009BEA32 /* Extension Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extension Coordinator.swift"; sourceTree = "<group>"; };
 		F9BE4590272DDACE009BEA32 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		F9BE45A9272F2DD0009BEA32 /* UserMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMock.swift; sourceTree = "<group>"; };
@@ -296,6 +300,7 @@
 				E0B48B062725525E00F657DA /* Hello */,
 				E06E67B22718B8C300CB1995 /* PhoneAuth */,
 				E0FD1537271DFA730014022B /* Functional */,
+				E08265322756A5B2004B0812 /* SplashController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -364,16 +369,25 @@
 			path = Errors;
 			sourceTree = "<group>";
 		};
+		E082652A27568776004B0812 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				E082652B27568786004B0812 /* UserBuilder.swift */,
+				E082652D27568C75004B0812 /* User.swift */,
+				E082652F27568F4C004B0812 /* UserError.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		E0B42F462700B310003C9C7B /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E0B42F472700B323003C9C7B /* SWUser.swift */,
-				F9BE458A272C826B009BEA32 /* SWUserAuthProvider.swift */,
-				F918FF95270A451500A74FBF /* AuthProvider.swift */,
-				E0128BEA273A80C200B5283C /* SWStorageProvider.swift */,
+				E082652A27568776004B0812 /* User */,
+				F9BE458A272C826B009BEA32 /* UserAuthProvider.swift */,
 				E008C4D12700BCE50093B5FD /* SwinjectAssemblies.swift */,
 				E06AB6B72704E558008D1BEA /* Country.swift */,
 				E0D715B42723FE2500AEA0FC /* AppPublisher + AppEvents.swift */,
+				E082652827556AA7004B0812 /* SettingsManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -595,12 +609,13 @@
 				E0128BF4273A970C00B5283C /* LoggerMessages.swift in Sources */,
 				E06AB6A827024711008D1BEA /* SWButton.swift in Sources */,
 				E0B48B0A272556D400F657DA /* AlertCoordinator.swift in Sources */,
-				F918FF96270A451500A74FBF /* AuthProvider.swift in Sources */,
+				E082653027568F4C004B0812 /* UserError.swift in Sources */,
 				E0FD1535271DF5950014022B /* FunctionalTabBarController.swift in Sources */,
 				E06AB6B12702517B008D1BEA /* StringExtension.swift in Sources */,
 				E082899A2712EC190060E4A8 /* AuthCoordinator.swift in Sources */,
 				E06AB69D27023856008D1BEA /* AuthController.swift in Sources */,
 				E0B48B082725526D00F657DA /* HelloControllerContainer.swift in Sources */,
+				E082652C27568786004B0812 /* UserBuilder.swift in Sources */,
 				E06E67B52718BAFA00CB1995 /* AuthError.swift in Sources */,
 				F9A14CF4274D21A7007E7180 /* HelloTextFieldController.swift in Sources */,
 				E04DCCF826F8F109003B4F8E /* AppDelegate.swift in Sources */,
@@ -609,23 +624,24 @@
 				E04DCD3026F8F6A7003B4F8E /* InitializationController.swift in Sources */,
 				E07022672755620000E86A8B /* InjectedPropertyWrapper.swift in Sources */,
 				E06AB6BA2704F3D5008D1BEA /* CountriesController.swift in Sources */,
+				E082652E27568C75004B0812 /* User.swift in Sources */,
 				E0B42F4E2700B42B003C9C7B /* FunctionalCoordinator.swift in Sources */,
 				E0B42F452700B2B2003C9C7B /* InternationalizationCoordinator.swift in Sources */,
-				F9BE458B272C826C009BEA32 /* SWUserAuthProvider.swift in Sources */,
+				F9BE458B272C826C009BEA32 /* UserAuthProvider.swift in Sources */,
 				E0128BED273A857200B5283C /* StorageError.swift in Sources */,
 				E0D715B52723FE2500AEA0FC /* AppPublisher + AppEvents.swift in Sources */,
-				E0B42F482700B323003C9C7B /* SWUser.swift in Sources */,
 				E0B48B052725520000F657DA /* HelloCoordinator.swift in Sources */,
 				E06AB6B82704E558008D1BEA /* Country.swift in Sources */,
+				E08265332756A5B2004B0812 /* SplashController.swift in Sources */,
 				E0128BF2273A96F800B5283C /* Loggable.swift in Sources */,
 				E06AB6A627024008008D1BEA /* SWTextField.swift in Sources */,
 				E03E643F27064BAA0095BC0E /* PhoneCodeController.swift in Sources */,
-				E0128BEB273A80C200B5283C /* SWStorageProvider.swift in Sources */,
 				E06AB6B3270251F7008D1BEA /* StringsEnum.swift in Sources */,
 				E04DCD2C26F8F60A003B4F8E /* InitializationCoordinator.swift in Sources */,
 				F9BE458E272D530F009BEA32 /* Extension Coordinator.swift in Sources */,
 				E04DCCFA26F8F109003B4F8E /* SceneDelegate.swift in Sources */,
 				E04DCD3726F8FC19003B4F8E /* MainFlowCoordinator.swift in Sources */,
+				E082652927556AA7004B0812 /* SettingsManager.swift in Sources */,
 				E0D4F8072753C1FA00BDF1FE /* HelloInformationController.swift in Sources */,
 				E06AB69A2702379F008D1BEA /* PhoneCodeView.swift in Sources */,
 				E06AB6B62704E45A008D1BEA /* InternationalizationSignal.swift in Sources */,
